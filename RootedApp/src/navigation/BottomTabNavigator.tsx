@@ -5,7 +5,6 @@ import { Ionicons } from '@expo/vector-icons';
 
 import HomeScreen from '../screens/HomeScreen';
 import DiscoverScreen from '../screens/DiscoverScreen';
-import JournalScreen from '../screens/JournalScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 
 const Tab = createBottomTabNavigator();
@@ -22,8 +21,6 @@ export default function BottomTabNavigator() {
               iconName = focused ? 'home' : 'home-outline';
             } else if (route.name === 'Discover') {
               iconName = focused ? 'compass' : 'compass-outline';
-            } else if (route.name === 'Journal') {
-              iconName = focused ? 'book' : 'book-outline';
             } else if (route.name === 'Profile') {
               iconName = focused ? 'person' : 'person-outline';
             } else {
@@ -61,13 +58,6 @@ export default function BottomTabNavigator() {
           component={DiscoverScreen}
           options={{
             tabBarLabel: 'Discover',
-          }}
-        />
-        <Tab.Screen 
-          name="Journal" 
-          component={JournalScreen}
-          options={{
-            tabBarLabel: 'Journal',
           }}
         />
         <Tab.Screen 

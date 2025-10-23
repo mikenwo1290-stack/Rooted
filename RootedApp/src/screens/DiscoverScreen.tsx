@@ -13,79 +13,108 @@ import { Ionicons } from '@expo/vector-icons';
 export default function DiscoverScreen() {
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        {/* Search Bar */}
-        <View style={styles.searchContainer}>
-          <Ionicons name="search" size={20} color="#6c757d" style={styles.searchIcon} />
-          <TextInput
-            style={styles.searchInput}
-            placeholder="Search events, groups, or communities..."
-            placeholderTextColor="#6c757d"
-          />
+      <ScrollView style={styles.communityScrollView} showsVerticalScrollIndicator={false}>
+        {/* Header with back button, title, and location */}
+        <View style={styles.communityHeader}>
+          <TouchableOpacity style={styles.backButton}>
+            <Ionicons name="arrow-back" size={24} color="#212529" />
+          </TouchableOpacity>
+          <Text style={styles.communityTitle}>Search</Text>
+          <View style={styles.locationSelector}>
+            <Ionicons name="paper-plane" size={16} color="#6c757d" />
+            <Text style={styles.locationText}>Washington DC</Text>
+            <Ionicons name="chevron-down" size={16} color="#6c757d" />
+          </View>
         </View>
 
-        {/* Filter Pills */}
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterContainer}>
-          <TouchableOpacity style={[styles.filterPill, styles.activeFilter]}>
-            <Text style={[styles.filterText, styles.activeFilterText]}>All</Text>
+        {/* Search Bar */}
+        <View style={styles.communitySearchContainer}>
+          <Ionicons name="search" size={20} color="#6c757d" style={styles.communitySearchIcon} />
+          <TextInput
+            style={styles.communitySearchInput}
+            placeholder="Bible Study"
+            placeholderTextColor="#6c757d"
+          />
+          <TouchableOpacity style={styles.clearButton}>
+            <Ionicons name="close-circle" size={20} color="#6c757d" />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.filterPill}>
-            <Text style={styles.filterText}>Worship</Text>
+        </View>
+
+        {/* Filter Categories */}
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.communityFilterContainer}>
+          <TouchableOpacity style={[styles.communityFilterPill, styles.activeCommunityFilter]}>
+            <Text style={[styles.communityFilterText, styles.activeCommunityFilterText]}>All</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.filterPill}>
-            <Text style={styles.filterText}>Community</Text>
+          <TouchableOpacity style={styles.communityFilterPill}>
+            <Text style={styles.communityFilterText}>Bible Study</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.filterPill}>
-            <Text style={styles.filterText}>Service</Text>
+          <TouchableOpacity style={styles.communityFilterPill}>
+            <Text style={styles.communityFilterText}>Testimonies</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.filterPill}>
-            <Text style={styles.filterText}>Study</Text>
+          <TouchableOpacity style={styles.communityFilterPill}>
+            <Text style={styles.communityFilterText}>Worship</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.communityFilterPill}>
+            <Text style={styles.communityFilterText}>Fellowship</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.communityFilterPill}>
+            <Text style={styles.communityFilterText}>Life Topics</Text>
           </TouchableOpacity>
         </ScrollView>
 
-        {/* Results */}
-        <View style={styles.resultsContainer}>
-          <Text style={styles.resultsTitle}>Discover Events</Text>
-          
-          <View style={styles.eventCard}>
-            <View style={styles.eventContent}>
-              <Text style={styles.eventTitle}>Bible Study Group</Text>
-              <Text style={styles.eventDate}>Wed, Oct 23 · 7:00 PM</Text>
-              <Text style={styles.eventLocation}>Grace Community Church</Text>
-              <Text style={styles.eventDescription}>
-                Join us for an in-depth study of the Book of Romans
-              </Text>
-            </View>
-            <TouchableOpacity style={styles.rsvpButton}>
-              <Text style={styles.rsvpText}>RSVP</Text>
+        {/* Video Grid */}
+        <View style={styles.videoGrid}>
+          {/* Row 1 */}
+          <View style={styles.videoGridRow}>
+            <TouchableOpacity style={styles.videoCard}>
+              <View style={styles.videoThumbnail}>
+                <Ionicons name="play-circle" size={40} color="#ffffff" />
+              </View>
+              <Text style={styles.videoCardTitle}>Grace Young Adults</Text>
+              <Text style={styles.videoCardSubtitle}>Bible Study • Alexandria</Text>
+              <View style={styles.videoCardFooter}>
+                <Text style={styles.videoRating}>4.3 ★</Text>
+                <Text style={styles.videoDistance}>18.6 mi</Text>
+              </View>
+            </TouchableOpacity>
+            
+            <TouchableOpacity style={styles.videoCard}>
+              <View style={styles.videoThumbnail}>
+                <Ionicons name="play-circle" size={40} color="#ffffff" />
+              </View>
+              <Text style={styles.videoCardTitle}>Hope Fellowship</Text>
+              <Text style={styles.videoCardSubtitle}>Testimonies • Downtown DC</Text>
+              <View style={styles.videoCardFooter}>
+                <Text style={styles.videoRating}>4.2 ★</Text>
+                <Text style={styles.videoDistance}>23.3 mi</Text>
+              </View>
             </TouchableOpacity>
           </View>
 
-          <View style={styles.eventCard}>
-            <View style={styles.eventContent}>
-              <Text style={styles.eventTitle}>Community Outreach</Text>
-              <Text style={styles.eventDate}>Sat, Oct 26 · 9:00 AM</Text>
-              <Text style={styles.eventLocation}>Downtown Shelter</Text>
-              <Text style={styles.eventDescription}>
-                Help serve meals to those in need in our community
-              </Text>
-            </View>
-            <TouchableOpacity style={styles.rsvpButton}>
-              <Text style={styles.rsvpText}>RSVP</Text>
+          {/* Row 2 */}
+          <View style={styles.videoGridRow}>
+            <TouchableOpacity style={styles.videoCard}>
+              <View style={styles.videoThumbnail}>
+                <Ionicons name="play-circle" size={40} color="#ffffff" />
+              </View>
+              <Text style={styles.videoCardTitle}>Faith Community</Text>
+              <Text style={styles.videoCardSubtitle}>Worship • Navy Yard</Text>
+              <View style={styles.videoCardFooter}>
+                <Text style={styles.videoRating}>4.4 ★</Text>
+                <Text style={styles.videoDistance}>23.4 mi</Text>
+              </View>
             </TouchableOpacity>
-          </View>
-
-          <View style={styles.eventCard}>
-            <View style={styles.eventContent}>
-              <Text style={styles.eventTitle}>Young Adults Social</Text>
-              <Text style={styles.eventDate}>Fri, Oct 25 · 8:00 PM</Text>
-              <Text style={styles.eventLocation}>Coffee House Downtown</Text>
-              <Text style={styles.eventDescription}>
-                Connect with other young adults over coffee and conversation
-              </Text>
-            </View>
-            <TouchableOpacity style={styles.rsvpButton}>
-              <Text style={styles.rsvpText}>RSVP</Text>
+            
+            <TouchableOpacity style={styles.videoCard}>
+              <View style={styles.videoThumbnail}>
+                <Ionicons name="play-circle" size={40} color="#ffffff" />
+              </View>
+              <Text style={styles.videoCardTitle}>New Life Church</Text>
+              <Text style={styles.videoCardSubtitle}>Fellowship • Virginia Beach</Text>
+              <View style={styles.videoCardFooter}>
+                <Text style={styles.videoRating}>4.7 ★</Text>
+                <Text style={styles.videoDistance}>149.5 mi</Text>
+              </View>
             </TouchableOpacity>
           </View>
         </View>
@@ -99,39 +128,64 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f8f9fa',
   },
-  scrollView: {
+  communityScrollView: {
     flex: 1,
-    paddingHorizontal: 16,
+    backgroundColor: '#ffffff',
   },
-  searchContainer: {
+  communityHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#ffffff',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e9ecef',
+  },
+  backButton: {
+    padding: 8,
+  },
+  communityTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#212529',
+  },
+  locationSelector: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+  },
+  locationText: {
+    fontSize: 14,
+    color: '#6c757d',
+    marginHorizontal: 4,
+  },
+  communitySearchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f8f9fa',
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 12,
+    marginHorizontal: 16,
     marginVertical: 16,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 2,
   },
-  searchIcon: {
+  communitySearchIcon: {
     marginRight: 12,
   },
-  searchInput: {
+  communitySearchInput: {
     flex: 1,
     fontSize: 16,
     color: '#212529',
   },
-  filterContainer: {
-    marginBottom: 20,
+  clearButton: {
+    padding: 4,
   },
-  filterPill: {
+  communityFilterContainer: {
+    marginBottom: 20,
+    paddingHorizontal: 16,
+  },
+  communityFilterPill: {
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
@@ -140,76 +194,77 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#e9ecef',
   },
-  activeFilter: {
+  activeCommunityFilter: {
     backgroundColor: '#007bff',
     borderColor: '#007bff',
   },
-  filterText: {
+  communityFilterText: {
     fontSize: 14,
     fontWeight: '500',
     color: '#6c757d',
   },
-  activeFilterText: {
+  activeCommunityFilterText: {
     color: '#ffffff',
   },
-  resultsContainer: {
-    marginBottom: 20,
+  videoGrid: {
+    paddingHorizontal: 16,
+    paddingBottom: 20,
   },
-  resultsTitle: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#212529',
+  videoGridRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     marginBottom: 16,
   },
-  eventCard: {
+  videoCard: {
+    flex: 1,
     backgroundColor: '#ffffff',
     borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
+    marginHorizontal: 4,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
-      height: 1,
+      height: 2,
     },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 2,
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
-  eventContent: {
-    marginBottom: 12,
+  videoThumbnail: {
+    height: 120,
+    backgroundColor: '#6c757d',
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  eventTitle: {
-    fontSize: 18,
+  videoCardTitle: {
+    fontSize: 16,
     fontWeight: '600',
     color: '#212529',
-    marginBottom: 4,
+    marginTop: 12,
+    marginHorizontal: 12,
   },
-  eventDate: {
-    fontSize: 14,
-    color: '#007bff',
-    fontWeight: '500',
-    marginBottom: 2,
-  },
-  eventLocation: {
+  videoCardSubtitle: {
     fontSize: 14,
     color: '#6c757d',
-    marginBottom: 8,
+    marginTop: 4,
+    marginHorizontal: 12,
   },
-  eventDescription: {
+  videoCardFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 8,
+    marginBottom: 12,
+    marginHorizontal: 12,
+  },
+  videoRating: {
     fontSize: 14,
-    color: '#495057',
-    lineHeight: 20,
+    fontWeight: '500',
+    color: '#212529',
   },
-  rsvpButton: {
-    backgroundColor: '#007bff',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 8,
-    alignSelf: 'flex-start',
-  },
-  rsvpText: {
-    color: '#ffffff',
+  videoDistance: {
     fontSize: 14,
-    fontWeight: '600',
+    color: '#6c757d',
   },
 });
