@@ -6,18 +6,21 @@ import {
   ScrollView,
   TouchableOpacity,
   Image,
+  ImageBackground,
   Dimensions,
   TextInput,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 
 export default function HomeScreen() {
   const [activeTab, setActiveTab] = useState<'community' | 'events'>('community');
+  const navigation = useNavigation();
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
         {/* Top Segmented Control */}
         <View style={styles.segmentedControl}>
           <TouchableOpacity 
@@ -38,24 +41,46 @@ export default function HomeScreen() {
         {activeTab === 'community' ? (
           /* Browse Categories Grid */
           <View style={styles.browseGrid}>
-            <TouchableOpacity style={[styles.browseCard, styles.musicCard]}>
+            <TouchableOpacity 
+              style={[styles.browseCard, styles.musicCard]}
+              onPress={() => navigation.navigate('Music' as never)}
+            >
               <Text style={styles.browseCardText}>Music</Text>
               <Ionicons name="musical-notes" size={24} color="rgba(255,255,255,0.3)" style={styles.browseCardIcon} />
             </TouchableOpacity>
             
-            <TouchableOpacity style={[styles.browseCard, styles.podcastsCard]}>
+            <TouchableOpacity 
+              style={[styles.browseCard, styles.podcastsCard]}
+              onPress={() => navigation.navigate('Podcast' as never)}
+            >
               <Text style={styles.browseCardText}>Podcasts</Text>
               <Ionicons name="headset" size={24} color="rgba(255,255,255,0.3)" style={styles.browseCardIcon} />
             </TouchableOpacity>
             
-            <TouchableOpacity style={[styles.browseCard, styles.audiobooksCard]}>
-              <Text style={styles.browseCardText}>Audiobooks</Text>
+            <TouchableOpacity 
+              style={[styles.browseCard, styles.booksCard]}
+              onPress={() => navigation.navigate('Audiobook' as never)}
+            >
+              <Text style={styles.browseCardText}>Books</Text>
               <Ionicons name="book" size={24} color="rgba(255,255,255,0.3)" style={styles.browseCardIcon} />
             </TouchableOpacity>
             
             <TouchableOpacity style={[styles.browseCard, styles.liveEventsCard]}>
               <Text style={styles.browseCardText}>Live Events</Text>
               <Ionicons name="calendar" size={24} color="rgba(255,255,255,0.3)" style={styles.browseCardIcon} />
+            </TouchableOpacity>
+            
+            <TouchableOpacity style={[styles.browseCard, styles.devotionalsCard]}>
+              <Text style={styles.browseCardText}>Devotionals</Text>
+              <Ionicons name="heart" size={24} color="rgba(255,255,255,0.3)" style={styles.browseCardIcon} />
+            </TouchableOpacity>
+            
+            <TouchableOpacity 
+              style={[styles.browseCard, styles.apparelCard]}
+              onPress={() => navigation.navigate('Apparel' as never)}
+            >
+              <Text style={styles.browseCardText}>Apparel</Text>
+              <Ionicons name="shirt" size={24} color="rgba(255,255,255,0.3)" style={styles.browseCardIcon} />
             </TouchableOpacity>
           </View>
         ) : (
@@ -77,96 +102,162 @@ export default function HomeScreen() {
                 <Text style={[styles.eventsFilterText, styles.activeEventsFilterText]}>All</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.eventsFilterPill}>
-                <Text style={styles.eventsFilterText}>Worship</Text>
+                <Text style={styles.eventsFilterText}>Concerts</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.eventsFilterPill}>
-                <Text style={styles.eventsFilterText}>Prayer</Text>
+                <Text style={styles.eventsFilterText}>Worship Night</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.eventsFilterPill}>
-                <Text style={styles.eventsFilterText}>Fellowship</Text>
+                <Text style={styles.eventsFilterText}>Live Events</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.eventsFilterPill}>
-                <Text style={styles.eventsFilterText}>Service</Text>
+                <Text style={styles.eventsFilterText}>Community Outreach</Text>
               </TouchableOpacity>
             </ScrollView>
 
-            {/* Events List */}
-            <View style={styles.eventsList}>
-              {/* Worship Night Event */}
-              <View style={styles.eventCard}>
-                <View style={styles.eventContent}>
-                  <Text style={styles.eventTitle}>Friday Night Worship</Text>
-                  <Text style={styles.eventDate}>Fri, Oct 25 · 7:00 PM</Text>
-                  <Text style={styles.eventLocation}>Grace Community Church, Alexandria, VA</Text>
-                  <Text style={styles.eventDescription}>
-                    Join us for an evening of worship, prayer, and fellowship
-                  </Text>
-                </View>
-                <Image
-                  source={{
-                    uri: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=80&h=80&fit=crop'
-                  }}
-                  style={styles.eventImage}
-                />
+            {/* Events Video Grid */}
+            <View style={styles.eventsVideoGrid}>
+              {/* Row 1 */}
+              <View style={styles.eventsVideoGridRow}>
+                <TouchableOpacity 
+                  style={styles.eventsVideoCard}
+                  onPress={() => navigation.navigate('EventVideoFeed' as never)}
+                >
+                  <ImageBackground 
+                    source={{ uri: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=300&h=200&fit=crop' }}
+                    style={styles.eventsVideoThumbnail}
+                    imageStyle={{ borderTopLeftRadius: 12, borderTopRightRadius: 12 }}
+                  >
+                    <View style={styles.eventsPlayOverlay}>
+                      <Ionicons name="play-circle" size={40} color="#ffffff" />
+                    </View>
+                  </ImageBackground>
+                  <View style={styles.eventsVideoCardContent}>
+                    <Text style={styles.eventsVideoCardTitle}>Gospel Concert</Text>
+                    <Text style={styles.eventsVideoCardSubtitle}>Concert • Downtown DC</Text>
+                    <Text style={styles.eventsVideoCardDate}>Fri, Nov 1 · 7:00 PM</Text>
+                  </View>
+                </TouchableOpacity>
+                
+                <TouchableOpacity 
+                  style={styles.eventsVideoCard}
+                  onPress={() => navigation.navigate('EventVideoFeed' as never)}
+                >
+                  <ImageBackground 
+                    source={{ uri: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=300&h=200&fit=crop' }}
+                    style={styles.eventsVideoThumbnail}
+                    imageStyle={{ borderTopLeftRadius: 12, borderTopRightRadius: 12 }}
+                  >
+                    <View style={styles.eventsPlayOverlay}>
+                      <Ionicons name="play-circle" size={40} color="#ffffff" />
+                    </View>
+                  </ImageBackground>
+                  <View style={styles.eventsVideoCardContent}>
+                    <Text style={styles.eventsVideoCardTitle}>Friday Night Worship</Text>
+                    <Text style={styles.eventsVideoCardSubtitle}>Worship Night • Alexandria</Text>
+                    <Text style={styles.eventsVideoCardDate}>Fri, Oct 25 · 7:00 PM</Text>
+                  </View>
+                </TouchableOpacity>
               </View>
 
-              {/* Night Vigil Event */}
-              <View style={styles.eventCard}>
-                <View style={styles.eventContent}>
-                  <Text style={styles.eventTitle}>All Night Prayer Vigil</Text>
-                  <Text style={styles.eventDate}>Sat, Oct 26 · 10:00 PM</Text>
-                  <Text style={styles.eventLocation}>Hope Church, Reston, VA</Text>
-                  <Text style={styles.eventDescription}>
-                    A night of prayer, fasting, and seeking God's presence
-                  </Text>
-                </View>
-                <Image
-                  source={{
-                    uri: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=80&h=80&fit=crop'
-                  }}
-                  style={styles.eventImage}
-                />
+              {/* Row 2 */}
+              <View style={styles.eventsVideoGridRow}>
+                <TouchableOpacity 
+                  style={styles.eventsVideoCard}
+                  onPress={() => navigation.navigate('EventVideoFeed' as never)}
+                >
+                  <ImageBackground 
+                    source={{ uri: 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=300&h=200&fit=crop' }}
+                    style={styles.eventsVideoThumbnail}
+                    imageStyle={{ borderTopLeftRadius: 12, borderTopRightRadius: 12 }}
+                  >
+                    <View style={styles.eventsPlayOverlay}>
+                      <Ionicons name="play-circle" size={40} color="#ffffff" />
+                    </View>
+                  </ImageBackground>
+                  <View style={styles.eventsVideoCardContent}>
+                    <Text style={styles.eventsVideoCardTitle}>All Night Prayer Vigil</Text>
+                    <Text style={styles.eventsVideoCardSubtitle}>Worship Night • Reston</Text>
+                    <Text style={styles.eventsVideoCardDate}>Sat, Oct 26 · 10:00 PM</Text>
+                  </View>
+                </TouchableOpacity>
+                
+                <TouchableOpacity 
+                  style={styles.eventsVideoCard}
+                  onPress={() => navigation.navigate('EventVideoFeed' as never)}
+                >
+                  <ImageBackground 
+                    source={{ uri: 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=300&h=200&fit=crop' }}
+                    style={styles.eventsVideoThumbnail}
+                    imageStyle={{ borderTopLeftRadius: 12, borderTopRightRadius: 12 }}
+                  >
+                    <View style={styles.eventsPlayOverlay}>
+                      <Ionicons name="play-circle" size={40} color="#ffffff" />
+                    </View>
+                  </ImageBackground>
+                  <View style={styles.eventsVideoCardContent}>
+                    <Text style={styles.eventsVideoCardTitle}>Youth Conference</Text>
+                    <Text style={styles.eventsVideoCardSubtitle}>Live Events • Arlington</Text>
+                    <Text style={styles.eventsVideoCardDate}>Sun, Oct 27 · 3:00 PM</Text>
+                  </View>
+                </TouchableOpacity>
               </View>
 
-              {/* Bible Study Event */}
-              <View style={styles.eventCard}>
-                <View style={styles.eventContent}>
-                  <Text style={styles.eventTitle}>Young Adults Bible Study</Text>
-                  <Text style={styles.eventDate}>Wed, Oct 23 · 7:30 PM</Text>
-                  <Text style={styles.eventLocation}>New Life Church, Arlington, VA</Text>
-                  <Text style={styles.eventDescription}>
-                    Deep dive into the Book of Romans with other young adults
-                  </Text>
-                </View>
-                <Image
-                  source={{
-                    uri: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop'
-                  }}
-                  style={styles.eventImage}
-                />
-              </View>
-
-              {/* Community Service Event */}
-              <View style={styles.eventCard}>
-                <View style={styles.eventContent}>
-                  <Text style={styles.eventTitle}>Community Outreach</Text>
-                  <Text style={styles.eventDate}>Sun, Oct 27 · 2:00 PM</Text>
-                  <Text style={styles.eventLocation}>Downtown Shelter, Washington DC</Text>
-                  <Text style={styles.eventDescription}>
-                    Serve meals and minister to those in need in our community
-                  </Text>
-                </View>
-                <Image
-                  source={{
-                    uri: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=80&h=80&fit=crop'
-                  }}
-                  style={styles.eventImage}
-                />
+              {/* Row 3 */}
+              <View style={styles.eventsVideoGridRow}>
+                <TouchableOpacity 
+                  style={styles.eventsVideoCard}
+                  onPress={() => navigation.navigate('EventVideoFeed' as never)}
+                >
+                  <ImageBackground 
+                    source={{ uri: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=300&h=200&fit=crop' }}
+                    style={styles.eventsVideoThumbnail}
+                    imageStyle={{ borderTopLeftRadius: 12, borderTopRightRadius: 12 }}
+                  >
+                    <View style={styles.eventsPlayOverlay}>
+                      <Ionicons name="play-circle" size={40} color="#ffffff" />
+                    </View>
+                  </ImageBackground>
+                  <View style={styles.eventsVideoCardContent}>
+                    <Text style={styles.eventsVideoCardTitle}>Community Outreach</Text>
+                    <Text style={styles.eventsVideoCardSubtitle}>Community Outreach • DC</Text>
+                    <Text style={styles.eventsVideoCardDate}>Sun, Oct 27 · 2:00 PM</Text>
+                  </View>
+                </TouchableOpacity>
+                
+                <TouchableOpacity 
+                  style={styles.eventsVideoCard}
+                  onPress={() => navigation.navigate('EventVideoFeed' as never)}
+                >
+                  <ImageBackground 
+                    source={{ uri: 'https://images.unsplash.com/photo-1524368535928-5b5e00ddc76b?w=300&h=200&fit=crop' }}
+                    style={styles.eventsVideoThumbnail}
+                    imageStyle={{ borderTopLeftRadius: 12, borderTopRightRadius: 12 }}
+                  >
+                    <View style={styles.eventsPlayOverlay}>
+                      <Ionicons name="play-circle" size={40} color="#ffffff" />
+                    </View>
+                  </ImageBackground>
+                  <View style={styles.eventsVideoCardContent}>
+                    <Text style={styles.eventsVideoCardTitle}>Praise & Worship Concert</Text>
+                    <Text style={styles.eventsVideoCardSubtitle}>Concert • Navy Yard</Text>
+                    <Text style={styles.eventsVideoCardDate}>Sat, Nov 2 · 6:30 PM</Text>
+                  </View>
+                </TouchableOpacity>
               </View>
             </View>
           </View>
         )}
       </ScrollView>
+      
+      {/* Floating Action Button */}
+      <TouchableOpacity
+        style={styles.fab}
+        onPress={() => navigation.navigate('SuggestArtist' as never)}
+        activeOpacity={0.8}
+      >
+        <Ionicons name="add" size={28} color="#ffffff" />
+      </TouchableOpacity>
     </SafeAreaView>
   );
 }
@@ -174,11 +265,33 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: '#F5F1E8',
   },
   scrollView: {
     flex: 1,
     paddingHorizontal: 16,
+  },
+  scrollContent: {
+    paddingBottom: 80, // Add padding to prevent content from being hidden behind FAB
+  },
+  fab: {
+    position: 'absolute',
+    bottom: 20,
+    right: 20,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: '#8B6F47',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#4A4238',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 8,
   },
   browseGrid: {
     flexDirection: 'row',
@@ -204,16 +317,22 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   musicCard: {
-    backgroundColor: '#ff6b9d',
+    backgroundColor: '#4A4238',
   },
   podcastsCard: {
-    backgroundColor: '#2d5a87',
+    backgroundColor: '#8B6F47',
   },
-  audiobooksCard: {
-    backgroundColor: '#6c5ce7',
+  booksCard: {
+    backgroundColor: '#C19A6B',
   },
   liveEventsCard: {
-    backgroundColor: '#a29bfe',
+    backgroundColor: '#6B4423',
+  },
+  devotionalsCard: {
+    backgroundColor: '#A0826D',
+  },
+  apparelCard: {
+    backgroundColor: '#9B7653',
   },
   browseCardText: {
     color: '#ffffff',
@@ -230,17 +349,17 @@ const styles = StyleSheet.create({
   eventsSearchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#ffffff',
+    backgroundColor: '#FFFEF9',
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 12,
     marginVertical: 16,
-    shadowColor: '#000',
+    shadowColor: '#4A4238',
     shadowOffset: {
       width: 0,
       height: 1,
     },
-    shadowOpacity: 0.05,
+    shadowOpacity: 0.1,
     shadowRadius: 2,
     elevation: 2,
   },
@@ -259,14 +378,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#FFFEF9',
     marginRight: 8,
     borderWidth: 1,
-    borderColor: '#e9ecef',
+    borderColor: '#C19A6B',
   },
   activeEventsFilter: {
-    backgroundColor: '#007bff',
-    borderColor: '#007bff',
+    backgroundColor: '#8B6F47',
+    borderColor: '#8B6F47',
   },
   eventsFilterText: {
     fontSize: 14,
@@ -276,12 +395,68 @@ const styles = StyleSheet.create({
   activeEventsFilterText: {
     color: '#ffffff',
   },
-  eventsList: {
-    marginBottom: 20,
+  eventsVideoGrid: {
+    paddingHorizontal: 0,
+    paddingBottom: 20,
+  },
+  eventsVideoGridRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 16,
+  },
+  eventsVideoCard: {
+    flex: 1,
+    backgroundColor: '#FFFEF9',
+    borderRadius: 12,
+    marginHorizontal: 4,
+    shadowColor: '#4A4238',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  eventsVideoThumbnail: {
+    height: 140,
+    backgroundColor: '#6c757d',
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    overflow: 'hidden',
+  },
+  eventsPlayOverlay: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    width: '100%',
+    height: '100%',
+  },
+  eventsVideoCardContent: {
+    padding: 12,
+  },
+  eventsVideoCardTitle: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#212529',
+    marginBottom: 4,
+  },
+  eventsVideoCardSubtitle: {
+    fontSize: 13,
+    color: '#8B6F47',
+    marginBottom: 4,
+    fontWeight: '500',
+  },
+  eventsVideoCardDate: {
+    fontSize: 12,
+    color: '#6c757d',
   },
   segmentedControl: {
     flexDirection: 'row',
-    backgroundColor: '#e9ecef',
+    backgroundColor: '#E6DDD1',
     borderRadius: 25,
     padding: 4,
     marginVertical: 16,
@@ -295,13 +470,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   activeSegment: {
-    backgroundColor: '#ffffff',
-    shadowColor: '#000',
+    backgroundColor: '#FFFEF9',
+    shadowColor: '#4A4238',
     shadowOffset: {
       width: 0,
       height: 1,
     },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.15,
     shadowRadius: 2,
     elevation: 2,
   },
@@ -347,45 +522,6 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontSize: 18,
     fontWeight: '600',
-  },
-  eventCard: {
-    flexDirection: 'row',
-    backgroundColor: '#ffffff',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 2,
-  },
-  eventContent: {
-    flex: 1,
-    marginRight: 12,
-  },
-  eventTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#212529',
-    marginBottom: 4,
-  },
-  eventDate: {
-    fontSize: 14,
-    color: '#6c757d',
-    marginBottom: 2,
-  },
-  eventLocation: {
-    fontSize: 14,
-    color: '#6c757d',
-  },
-  eventImage: {
-    width: 60,
-    height: 60,
-    borderRadius: 8,
   },
   sectionHeader: {
     flexDirection: 'row',

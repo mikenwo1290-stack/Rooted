@@ -6,11 +6,15 @@ import {
   ScrollView,
   TouchableOpacity,
   TextInput,
+  Image,
+  ImageBackground,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 
 export default function DiscoverScreen() {
+  const navigation = useNavigation();
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.communityScrollView} showsVerticalScrollIndicator={false}>
@@ -66,10 +70,19 @@ export default function DiscoverScreen() {
         <View style={styles.videoGrid}>
           {/* Row 1 */}
           <View style={styles.videoGridRow}>
-            <TouchableOpacity style={styles.videoCard}>
-              <View style={styles.videoThumbnail}>
-                <Ionicons name="play-circle" size={40} color="#ffffff" />
-              </View>
+            <TouchableOpacity 
+              style={styles.videoCard}
+              onPress={() => navigation.navigate('VideoFeed' as never)}
+            >
+              <ImageBackground 
+                source={{ uri: 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=300&h=200&fit=crop' }}
+                style={styles.videoThumbnail}
+                imageStyle={{ borderTopLeftRadius: 12, borderTopRightRadius: 12 }}
+              >
+                <View style={styles.playOverlay}>
+                  <Ionicons name="play-circle" size={40} color="#ffffff" />
+                </View>
+              </ImageBackground>
               <Text style={styles.videoCardTitle}>Grace Young Adults</Text>
               <Text style={styles.videoCardSubtitle}>Bible Study • Alexandria</Text>
               <View style={styles.videoCardFooter}>
@@ -78,10 +91,19 @@ export default function DiscoverScreen() {
               </View>
             </TouchableOpacity>
             
-            <TouchableOpacity style={styles.videoCard}>
-              <View style={styles.videoThumbnail}>
-                <Ionicons name="play-circle" size={40} color="#ffffff" />
-              </View>
+            <TouchableOpacity 
+              style={styles.videoCard}
+              onPress={() => navigation.navigate('VideoFeed' as never)}
+            >
+              <ImageBackground 
+                source={{ uri: 'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=300&h=200&fit=crop' }}
+                style={styles.videoThumbnail}
+                imageStyle={{ borderTopLeftRadius: 12, borderTopRightRadius: 12 }}
+              >
+                <View style={styles.playOverlay}>
+                  <Ionicons name="play-circle" size={40} color="#ffffff" />
+                </View>
+              </ImageBackground>
               <Text style={styles.videoCardTitle}>Hope Fellowship</Text>
               <Text style={styles.videoCardSubtitle}>Testimonies • Downtown DC</Text>
               <View style={styles.videoCardFooter}>
@@ -93,10 +115,19 @@ export default function DiscoverScreen() {
 
           {/* Row 2 */}
           <View style={styles.videoGridRow}>
-            <TouchableOpacity style={styles.videoCard}>
-              <View style={styles.videoThumbnail}>
-                <Ionicons name="play-circle" size={40} color="#ffffff" />
-              </View>
+            <TouchableOpacity 
+              style={styles.videoCard}
+              onPress={() => navigation.navigate('VideoFeed' as never)}
+            >
+              <ImageBackground 
+                source={{ uri: 'https://images.unsplash.com/photo-1517230878791-4d28214057c2?w=300&h=200&fit=crop' }}
+                style={styles.videoThumbnail}
+                imageStyle={{ borderTopLeftRadius: 12, borderTopRightRadius: 12 }}
+              >
+                <View style={styles.playOverlay}>
+                  <Ionicons name="play-circle" size={40} color="#ffffff" />
+                </View>
+              </ImageBackground>
               <Text style={styles.videoCardTitle}>Faith Community</Text>
               <Text style={styles.videoCardSubtitle}>Worship • Navy Yard</Text>
               <View style={styles.videoCardFooter}>
@@ -105,10 +136,19 @@ export default function DiscoverScreen() {
               </View>
             </TouchableOpacity>
             
-            <TouchableOpacity style={styles.videoCard}>
-              <View style={styles.videoThumbnail}>
-                <Ionicons name="play-circle" size={40} color="#ffffff" />
-              </View>
+            <TouchableOpacity 
+              style={styles.videoCard}
+              onPress={() => navigation.navigate('VideoFeed' as never)}
+            >
+              <ImageBackground 
+                source={{ uri: 'https://images.unsplash.com/photo-1502086223501-7ea6ecd79368?w=300&h=200&fit=crop' }}
+                style={styles.videoThumbnail}
+                imageStyle={{ borderTopLeftRadius: 12, borderTopRightRadius: 12 }}
+              >
+                <View style={styles.playOverlay}>
+                  <Ionicons name="play-circle" size={40} color="#ffffff" />
+                </View>
+              </ImageBackground>
               <Text style={styles.videoCardTitle}>New Life Church</Text>
               <Text style={styles.videoCardSubtitle}>Fellowship • Virginia Beach</Text>
               <View style={styles.videoCardFooter}>
@@ -236,6 +276,15 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
+    overflow: 'hidden',
+  },
+  playOverlay: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    width: '100%',
+    height: '100%',
   },
   videoCardTitle: {
     fontSize: 16,

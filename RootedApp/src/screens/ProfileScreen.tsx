@@ -18,7 +18,7 @@ export default function ProfileScreen() {
         <View style={styles.profileHeader}>
           <Image
             source={{
-              uri: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop'
+              uri: ''
             }}
             style={styles.profileImage}
           />
