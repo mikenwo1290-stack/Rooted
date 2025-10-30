@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Ionicons } from '@expo/vector-icons';
@@ -20,6 +20,7 @@ import CreatorCategoryScreen from '../screens/CreatorCategoryScreen';
 import SuggestArtistScreen from '../screens/SuggestArtistScreen';
 import SuggestGroupScreen from '../screens/SuggestGroupScreen';
 import SuggestEventScreen from '../screens/SuggestEventScreen';
+import GroupProfileScreen from '../screens/GroupProfileScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -50,6 +51,7 @@ function DiscoverStackNavigator() {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="DiscoverMain" component={DiscoverScreen} />
       <Stack.Screen name="VideoFeed" component={VideoFeedScreen} />
+      <Stack.Screen name="GroupProfile" component={GroupProfileScreen} />
       <Stack.Screen name="SuggestGroup" component={SuggestGroupScreen} />
     </Stack.Navigator>
   );
@@ -75,19 +77,22 @@ export default function BottomTabNavigator() {
 
             return <Ionicons name={iconName} size={size} color={color} />;
           },
-          tabBarActiveTintColor: '#007bff',
-          tabBarInactiveTintColor: '#6c757d',
+          tabBarActiveTintColor: '#007aff',
+          tabBarInactiveTintColor: '#8e8e93',
           tabBarStyle: {
             backgroundColor: '#ffffff',
-            borderTopWidth: 1,
-            borderTopColor: '#e9ecef',
-            paddingBottom: 5,
-            paddingTop: 5,
-            height: 60,
+            borderTopWidth: 0.5,
+            borderTopColor: '#e5e5e7',
+            height: 84,
+            paddingTop: 8,
+            paddingBottom: 28,
+            elevation: 0,
+            shadowOpacity: 0,
           },
           tabBarLabelStyle: {
-            fontSize: 12,
+            fontSize: 11,
             fontWeight: '500',
+            marginTop: 4,
           },
           headerShown: false,
         })}
@@ -102,9 +107,25 @@ export default function BottomTabNavigator() {
         <Tab.Screen 
           name="Discover" 
           component={DiscoverStackNavigator}
-          options={{
+          options={({ route }) => ({
             tabBarLabel: 'Discover',
-          }}
+            tabBarStyle: ((route) => {
+              const routeName = getFocusedRouteNameFromRoute(route) ?? '';
+              if (routeName === 'VideoFeed') {
+                return { display: 'none' };
+              }
+              return {
+                backgroundColor: '#ffffff',
+                borderTopWidth: 0.5,
+                borderTopColor: '#e5e5e7',
+                height: 84,
+                paddingTop: 8,
+                paddingBottom: 28,
+                elevation: 0,
+                shadowOpacity: 0,
+              };
+            })(route),
+          })}
         />
         <Tab.Screen 
           name="Profile" 
