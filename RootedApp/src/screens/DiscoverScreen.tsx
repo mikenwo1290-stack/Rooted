@@ -6,12 +6,12 @@ import {
   ScrollView,
   TouchableOpacity,
   TextInput,
-  Image,
   ImageBackground,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { Video, ResizeMode } from 'expo-av';
 
 export default function DiscoverScreen() {
   const navigation = useNavigation();
@@ -44,6 +44,16 @@ export default function DiscoverScreen() {
           </TouchableOpacity>
         </View>
 
+        {/* Suggest Group Button */}
+        <TouchableOpacity 
+          style={styles.suggestGroupButton}
+          onPress={() => navigation.navigate('SuggestGroup' as never)}
+        >
+          <Ionicons name="add-circle" size={20} color="#007bff" />
+          <Text style={styles.suggestGroupText}>Suggest Your Group</Text>
+          <Ionicons name="arrow-forward" size={16} color="#007bff" />
+        </TouchableOpacity>
+
         {/* Filter Categories */}
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.communityFilterContainer}>
           <TouchableOpacity style={[styles.communityFilterPill, styles.activeCommunityFilter]}>
@@ -72,44 +82,41 @@ export default function DiscoverScreen() {
           <View style={styles.videoGridRow}>
             <TouchableOpacity 
               style={styles.videoCard}
-              onPress={() => navigation.navigate('VideoFeed' as never)}
+              onPress={() => navigation.navigate('VideoFeed' as never, { initialIndex: 0 } as never)}
             >
-              <ImageBackground 
-                source={{ uri: 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=300&h=200&fit=crop' }}
-                style={styles.videoThumbnail}
-                imageStyle={{ borderTopLeftRadius: 12, borderTopRightRadius: 12 }}
-              >
-                <View style={styles.playOverlay}>
-                  <Ionicons name="play-circle" size={40} color="#ffffff" />
-                </View>
-              </ImageBackground>
-              <Text style={styles.videoCardTitle}>Grace Young Adults</Text>
-              <Text style={styles.videoCardSubtitle}>Bible Study • Alexandria</Text>
-              <View style={styles.videoCardFooter}>
-                <Text style={styles.videoRating}>4.3 ★</Text>
-                <Text style={styles.videoDistance}>18.6 mi</Text>
+              <View style={styles.videoThumbnail}>
+                <Video
+                  source={{ uri: "https://firebasestorage.googleapis.com/v0/b/rooted-90e83.firebasestorage.app/o/Move%20Church.mp4?alt=media&token=25aa211b-2e8c-453c-b787-74256e2575dd" }}
+                  style={{ width: '100%', height: '100%' }}
+                  resizeMode={ResizeMode.COVER}
+                  shouldPlay={true}
+                  isLooping={true}
+                  isMuted={true}
+                  useNativeControls={false}
+                />
               </View>
+              <Text style={styles.videoCardTitle}>Young Life VA</Text>
+              <Text style={styles.videoCardSubtitle}>Bible Study • Alexandria</Text>
             </TouchableOpacity>
             
             <TouchableOpacity 
               style={styles.videoCard}
-              onPress={() => navigation.navigate('VideoFeed' as never)}
+              onPress={() => navigation.navigate('VideoFeed' as never, { initialIndex: 1 } as never)}
             >
-              <ImageBackground 
-                source={{ uri: 'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=300&h=200&fit=crop' }}
-                style={styles.videoThumbnail}
-                imageStyle={{ borderTopLeftRadius: 12, borderTopRightRadius: 12 }}
-              >
-                <View style={styles.playOverlay}>
-                  <Ionicons name="play-circle" size={40} color="#ffffff" />
-                </View>
-              </ImageBackground>
-              <Text style={styles.videoCardTitle}>Hope Fellowship</Text>
-              <Text style={styles.videoCardSubtitle}>Testimonies • Downtown DC</Text>
-              <View style={styles.videoCardFooter}>
-                <Text style={styles.videoRating}>4.2 ★</Text>
-                <Text style={styles.videoDistance}>23.3 mi</Text>
+              <View style={styles.videoThumbnail}>
+                <Video
+                  source={{ uri: "https://firebasestorage.googleapis.com/v0/b/rooted-90e83.firebasestorage.app/o/CornerstoneYA.mp4?alt=media&token=ea5cdd5a-9a69-4546-aeac-62b0698c0be5" }}
+                  style={{ width: '100%', height: '100%' }}
+                  resizeMode={ResizeMode.COVER}
+                  shouldPlay={true}
+                  isLooping={true}
+                  isMuted={true}
+                  useNativeControls={false}
+                />
               </View>
+
+              <Text style={styles.videoCardTitle}>Cornerstone YA</Text>
+              <Text style={styles.videoCardSubtitle}>Testimonies • Leesburg VA</Text>
             </TouchableOpacity>
           </View>
 
@@ -117,44 +124,41 @@ export default function DiscoverScreen() {
           <View style={styles.videoGridRow}>
             <TouchableOpacity 
               style={styles.videoCard}
-              onPress={() => navigation.navigate('VideoFeed' as never)}
+              onPress={() => navigation.navigate('VideoFeed' as never, { initialIndex: 2 } as never)}
             >
-              <ImageBackground 
-                source={{ uri: 'https://images.unsplash.com/photo-1517230878791-4d28214057c2?w=300&h=200&fit=crop' }}
-                style={styles.videoThumbnail}
-                imageStyle={{ borderTopLeftRadius: 12, borderTopRightRadius: 12 }}
-              >
-                <View style={styles.playOverlay}>
-                  <Ionicons name="play-circle" size={40} color="#ffffff" />
-                </View>
-              </ImageBackground>
-              <Text style={styles.videoCardTitle}>Faith Community</Text>
-              <Text style={styles.videoCardSubtitle}>Worship • Navy Yard</Text>
-              <View style={styles.videoCardFooter}>
-                <Text style={styles.videoRating}>4.4 ★</Text>
-                <Text style={styles.videoDistance}>23.4 mi</Text>
+              <View style={styles.videoThumbnail}>
+                <Video
+                  source={{ uri: "https://firebasestorage.googleapis.com/v0/b/rooted-90e83.firebasestorage.app/o/CityLigtht.mp4?alt=media&token=ab04fd54-0c74-4baf-81c4-9cd54cfa598b" }}
+                  style={{ width: '100%', height: '100%' }}
+                  resizeMode={ResizeMode.COVER}
+                  shouldPlay={true}
+                  isLooping={true}
+                  isMuted={true}
+                  useNativeControls={false}
+                />
               </View>
+              <Text style={styles.videoCardTitle}>City Light Young Adults</Text>
+              <Text style={styles.videoCardSubtitle}>Worship • Falls Church VA</Text>
             </TouchableOpacity>
             
             <TouchableOpacity 
               style={styles.videoCard}
-              onPress={() => navigation.navigate('VideoFeed' as never)}
+              onPress={() => navigation.navigate('VideoFeed' as never, { initialIndex: 3 } as never)}
             >
-              <ImageBackground 
-                source={{ uri: 'https://images.unsplash.com/photo-1502086223501-7ea6ecd79368?w=300&h=200&fit=crop' }}
-                style={styles.videoThumbnail}
-                imageStyle={{ borderTopLeftRadius: 12, borderTopRightRadius: 12 }}
-              >
-                <View style={styles.playOverlay}>
-                  <Ionicons name="play-circle" size={40} color="#ffffff" />
-                </View>
-              </ImageBackground>
-              <Text style={styles.videoCardTitle}>New Life Church</Text>
-              <Text style={styles.videoCardSubtitle}>Fellowship • Virginia Beach</Text>
-              <View style={styles.videoCardFooter}>
-                <Text style={styles.videoRating}>4.7 ★</Text>
-                <Text style={styles.videoDistance}>149.5 mi</Text>
+              <View style={styles.videoThumbnail}>
+                <Video
+                  source={{ uri: "https://firebasestorage.googleapis.com/v0/b/rooted-90e83.firebasestorage.app/o/WordOfLife.mp4?alt=media&token=e693a96c-05ec-4927-9d10-1ee4fb134a05" }}
+                  style={{ width: '100%', height: '100%' }}
+                  resizeMode={ResizeMode.COVER}
+                  shouldPlay={true}
+                  isLooping={true}
+                  isMuted={true}
+                  useNativeControls={false}
+                />
               </View>
+
+              <Text style={styles.videoCardTitle}>Word of Life Young Adults</Text>
+              <Text style={styles.videoCardSubtitle}>Fellowship • Virginia Beach</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -274,17 +278,18 @@ const styles = StyleSheet.create({
     backgroundColor: '#6c757d',
     borderTopLeftRadius: 12,
     borderTopRightRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
     overflow: 'hidden',
+    position: 'relative',
   },
   playOverlay: {
-    flex: 1,
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
-    width: '100%',
-    height: '100%',
+    backgroundColor: 'rgba(0, 0, 0, 0.2)',
   },
   videoCardTitle: {
     fontSize: 16,
@@ -315,5 +320,25 @@ const styles = StyleSheet.create({
   videoDistance: {
     fontSize: 14,
     color: '#6c757d',
+  },
+  suggestGroupButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#e7f3ff',
+    borderRadius: 12,
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    marginHorizontal: 16,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#007bff',
+  },
+  suggestGroupText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#007bff',
+    marginLeft: 8,
+    marginRight: 8,
   },
 });

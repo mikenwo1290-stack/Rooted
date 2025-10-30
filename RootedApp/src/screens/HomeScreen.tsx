@@ -65,11 +65,6 @@ export default function HomeScreen() {
               <Ionicons name="book" size={24} color="rgba(255,255,255,0.3)" style={styles.browseCardIcon} />
             </TouchableOpacity>
             
-            <TouchableOpacity style={[styles.browseCard, styles.liveEventsCard]}>
-              <Text style={styles.browseCardText}>Live Events</Text>
-              <Ionicons name="calendar" size={24} color="rgba(255,255,255,0.3)" style={styles.browseCardIcon} />
-            </TouchableOpacity>
-            
             <TouchableOpacity style={[styles.browseCard, styles.devotionalsCard]}>
               <Text style={styles.browseCardText}>Devotionals</Text>
               <Ionicons name="heart" size={24} color="rgba(255,255,255,0.3)" style={styles.browseCardIcon} />
@@ -81,6 +76,14 @@ export default function HomeScreen() {
             >
               <Text style={styles.browseCardText}>Apparel</Text>
               <Ionicons name="shirt" size={24} color="rgba(255,255,255,0.3)" style={styles.browseCardIcon} />
+            </TouchableOpacity>
+            
+            <TouchableOpacity 
+              style={[styles.browseCard, styles.creatorsCard]}
+              onPress={() => navigation.navigate('Creators' as never)}
+            >
+              <Text style={styles.browseCardText}>Creators</Text>
+              <Ionicons name="people" size={24} color="rgba(255,255,255,0.3)" style={styles.browseCardIcon} />
             </TouchableOpacity>
           </View>
         ) : (
@@ -253,7 +256,7 @@ export default function HomeScreen() {
       {/* Floating Action Button */}
       <TouchableOpacity
         style={styles.fab}
-        onPress={() => navigation.navigate('SuggestArtist' as never)}
+        onPress={() => navigation.navigate(activeTab === 'events' ? 'SuggestEvent' as never : 'SuggestArtist' as never)}
         activeOpacity={0.8}
       >
         <Ionicons name="add" size={28} color="#ffffff" />
@@ -325,14 +328,14 @@ const styles = StyleSheet.create({
   booksCard: {
     backgroundColor: '#C19A6B',
   },
-  liveEventsCard: {
-    backgroundColor: '#6B4423',
-  },
   devotionalsCard: {
     backgroundColor: '#A0826D',
   },
   apparelCard: {
     backgroundColor: '#9B7653',
+  },
+  creatorsCard: {
+    backgroundColor: '#7D5E3F',
   },
   browseCardText: {
     color: '#ffffff',

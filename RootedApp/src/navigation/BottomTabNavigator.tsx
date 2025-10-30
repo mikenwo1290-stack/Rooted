@@ -15,7 +15,11 @@ import EventVideoFeedScreen from '../screens/EventVideoFeedScreen';
 import ArtistProfileScreen from '../screens/ArtistProfileScreen';
 import ArtistReelsScreen from '../screens/ArtistReelsScreen';
 import ApparelScreen from '../screens/ApparelScreen';
+import CreatorsScreen from '../screens/CreatorsScreen';
+import CreatorCategoryScreen from '../screens/CreatorCategoryScreen';
 import SuggestArtistScreen from '../screens/SuggestArtistScreen';
+import SuggestGroupScreen from '../screens/SuggestGroupScreen';
+import SuggestEventScreen from '../screens/SuggestEventScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -32,7 +36,10 @@ function HomeStackNavigator() {
       <Stack.Screen name="ArtistProfile" component={ArtistProfileScreen} />
       <Stack.Screen name="ArtistReels" component={ArtistReelsScreen} />
       <Stack.Screen name="Apparel" component={ApparelScreen} />
+      <Stack.Screen name="Creators" component={CreatorsScreen} />
+      <Stack.Screen name="CreatorCategory" component={CreatorCategoryScreen} />
       <Stack.Screen name="SuggestArtist" component={SuggestArtistScreen} />
+      <Stack.Screen name="SuggestEvent" component={SuggestEventScreen} />
     </Stack.Navigator>
   );
 }
@@ -43,6 +50,7 @@ function DiscoverStackNavigator() {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="DiscoverMain" component={DiscoverScreen} />
       <Stack.Screen name="VideoFeed" component={VideoFeedScreen} />
+      <Stack.Screen name="SuggestGroup" component={SuggestGroupScreen} />
     </Stack.Navigator>
   );
 }

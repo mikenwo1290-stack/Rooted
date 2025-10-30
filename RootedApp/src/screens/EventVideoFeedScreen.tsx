@@ -88,7 +88,7 @@ const eventVideos: EventVideo[] = [
     shares: 123,
     attending: 589,
     thumbnail: 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=400&h=800&fit=crop',
-    organizer: 'New Life Church',
+    organizer: 'Word of Life Young Adults',
     description: 'Empowering the next generation through worship and teaching',
   },
   {
