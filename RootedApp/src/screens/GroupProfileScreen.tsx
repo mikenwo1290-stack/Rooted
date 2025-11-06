@@ -7,10 +7,12 @@ import {
   TouchableOpacity,
   Image,
   Linking,
+  ImageBackground,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import { LinearGradient } from 'expo-linear-gradient';
 
 export default function GroupProfileScreen() {
   const navigation = useNavigation();
@@ -22,29 +24,50 @@ export default function GroupProfileScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        {/* Header */}
-        <View style={styles.header}>
-          <TouchableOpacity 
-            style={styles.backButton}
-            onPress={() => navigation.goBack()}
+        {/* Header Background with Image */}
+        <ImageBackground
+          source={require('../../assets/yl-group-photo.jpg')}
+          style={styles.headerBackground}
+          resizeMode="cover"
+        >
+          <LinearGradient
+            colors={['rgba(0,0,0,0.3)', 'rgba(0,0,0,0.6)']}
+            style={styles.gradientOverlay}
           >
-            <Ionicons name="arrow-back" size={24} color="#000000" />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Profile</Text>
-          <TouchableOpacity style={styles.moreButton}>
-            <Ionicons name="ellipsis-horizontal" size={24} color="#000000" />
-          </TouchableOpacity>
-        </View>
+            {/* Header Navigation */}
+            <View style={styles.header}>
+              <TouchableOpacity 
+                style={styles.backButton}
+                onPress={() => navigation.goBack()}
+              >
+                <Ionicons name="arrow-back" size={24} color="#ffffff" />
+              </TouchableOpacity>
+              <Text style={styles.headerTitle}>Profile</Text>
+              <TouchableOpacity style={styles.moreButton}>
+                <Ionicons name="ellipsis-horizontal" size={24} color="#ffffff" />
+              </TouchableOpacity>
+            </View>
+
+            {/* Profile Icon with notification badge */}
+            <View style={styles.profileIconContainer}>
+              <View style={styles.notificationBadge}>
+                <Text style={styles.badgeText}>45</Text>
+              </View>
+            </View>
+          </LinearGradient>
+        </ImageBackground>
 
         {/* Hero Section */}
         <View style={styles.heroSection}>
           <View style={styles.avatarContainer}>
-            <View style={styles.avatar}>
-              <Ionicons name="people" size={60} color="#007aff" />
-            </View>
+            <Image 
+              source={require('../../assets/yl-logo.png')}
+              style={styles.avatar}
+              resizeMode="contain"
+            />
           </View>
           
-          <Text style={styles.groupTitle}>{groupData?.title || 'Group Name'}</Text>
+          <Text style={styles.groupTitle}>{groupData?.title || 'Young Life VA'}</Text>
           
           <View style={styles.ratingRow}>
             <Ionicons name="star" size={16} color="#FFB800" />
@@ -190,13 +213,20 @@ const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
   },
+  headerBackground: {
+    width: '100%',
+    height: 220,
+  },
+  gradientOverlay: {
+    flex: 1,
+    justifyContent: 'space-between',
+  },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: '#ffffff',
   },
   backButton: {
     padding: 4,
@@ -204,10 +234,28 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#000000',
+    color: '#ffffff',
   },
   moreButton: {
     padding: 4,
+  },
+  profileIconContainer: {
+    alignItems: 'flex-end',
+    paddingRight: 16,
+    paddingBottom: 16,
+  },
+  notificationBadge: {
+    backgroundColor: '#FFB800',
+    borderRadius: 12,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    minWidth: 45,
+    alignItems: 'center',
+  },
+  badgeText: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#000000',
   },
   heroSection: {
     paddingHorizontal: 16,
@@ -215,17 +263,17 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
     borderBottomWidth: 8,
     borderBottomColor: '#f2f2f7',
+    marginTop: -30,
   },
   avatarContainer: {
     marginBottom: 16,
   },
   avatar: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: '#f2f2f7',
-    justifyContent: 'center',
-    alignItems: 'center',
+    width: 120,
+    height: 120,
+    borderRadius: 12,
+    backgroundColor: '#000000',
+    padding: 16,
   },
   groupTitle: {
     fontSize: 28,
