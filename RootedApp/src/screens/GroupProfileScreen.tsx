@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -6,6 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Image,
+  Linking,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -16,6 +17,7 @@ export default function GroupProfileScreen() {
   const route = useRoute();
   const params = route.params as any;
   const groupData = params?.groupData;
+  const [selectedTab, setSelectedTab] = useState('About');
 
   return (
     <SafeAreaView style={styles.container}>
@@ -34,8 +36,8 @@ export default function GroupProfileScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* Profile Info */}
-        <View style={styles.profileSection}>
+        {/* Hero Section */}
+        <View style={styles.heroSection}>
           <View style={styles.avatarContainer}>
             <View style={styles.avatar}>
               <Ionicons name="people" size={60} color="#007aff" />
@@ -43,75 +45,114 @@ export default function GroupProfileScreen() {
           </View>
           
           <Text style={styles.groupTitle}>{groupData?.title || 'Group Name'}</Text>
-          <Text style={styles.username}>{groupData?.username || '@username'}</Text>
           
-          <View style={styles.statsRow}>
-            <View style={styles.statItem}>
-              <Text style={styles.statNumber}>{groupData?.likes || 0}</Text>
-              <Text style={styles.statLabel}>Likes</Text>
-            </View>
-            <View style={styles.statDivider} />
-            <View style={styles.statItem}>
-              <Text style={styles.statNumber}>{groupData?.comments || 0}</Text>
-              <Text style={styles.statLabel}>Comments</Text>
-            </View>
-            <View style={styles.statDivider} />
-            <View style={styles.statItem}>
-              <Text style={styles.statNumber}>{groupData?.shares || 0}</Text>
-              <Text style={styles.statLabel}>Shares</Text>
-            </View>
+          <View style={styles.ratingRow}>
+            <Ionicons name="star" size={16} color="#FFB800" />
+            <Text style={styles.ratingText}>4.8</Text>
+            <Text style={styles.metaText}> • {groupData?.category || 'Fellowship'} • </Text>
+            <Text style={styles.metaText}>{groupData?.location || 'Washington DC'}</Text>
           </View>
+
+          <Text style={styles.description}>
+            Join us for fellowship, worship, and community. We meet weekly to grow in faith together and build lasting relationships.
+          </Text>
 
           <View style={styles.actionButtons}>
-            <TouchableOpacity style={styles.followButton}>
-              <Text style={styles.followButtonText}>Follow</Text>
+            <TouchableOpacity style={styles.joinButton}>
+              <Text style={styles.joinButtonText}>Join Group</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.messageButton}>
-              <Ionicons name="chatbubble-outline" size={20} color="#007aff" />
+            <TouchableOpacity style={styles.shareButton}>
+              <Ionicons name="arrow-redo-outline" size={20} color="#007aff" />
             </TouchableOpacity>
           </View>
         </View>
 
-        {/* About Section */}
+        {/* Tab Navigation */}
+        <View style={styles.tabContainer}>
+          <TouchableOpacity 
+            style={[styles.tab, selectedTab === 'About' && styles.activeTab]}
+            onPress={() => setSelectedTab('About')}
+          >
+            <Text style={[styles.tabText, selectedTab === 'About' && styles.activeTabText]}>
+              About
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            style={[styles.tab, selectedTab === 'Events' && styles.activeTab]}
+            onPress={() => setSelectedTab('Events')}
+          >
+            <Text style={[styles.tabText, selectedTab === 'Events' && styles.activeTabText]}>
+              Events
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            style={[styles.tab, selectedTab === 'Media' && styles.activeTab]}
+            onPress={() => setSelectedTab('Media')}
+          >
+            <Text style={[styles.tabText, selectedTab === 'Media' && styles.activeTabText]}>
+              Media
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Location Section */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>About</Text>
-          <View style={styles.infoRow}>
-            <Ionicons name="bookmark-outline" size={20} color="#8e8e93" />
-            <Text style={styles.infoText}>{groupData?.category || 'Category'}</Text>
+          <View style={styles.sectionHeader}>
+            <Ionicons name="location" size={20} color="#ff3b30" />
+            <Text style={styles.addressText}>
+              1234 Church Street, {groupData?.location || 'Washington DC'}
+            </Text>
           </View>
+          <TouchableOpacity style={styles.directionsButton}>
+            <Ionicons name="navigate" size={16} color="#007aff" />
+            <Text style={styles.directionsText}>Get Directions</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Quick Info Section */}
+        <View style={styles.section}>
           <View style={styles.infoRow}>
-            <Ionicons name="location-outline" size={20} color="#8e8e93" />
-            <Text style={styles.infoText}>{groupData?.location || 'Location'}</Text>
-          </View>
-          <View style={styles.infoRow}>
-            <Ionicons name="people-outline" size={20} color="#8e8e93" />
-            <Text style={styles.infoText}>Young Adults Community</Text>
+            <Ionicons name="time-outline" size={22} color="#34c759" />
+            <View style={styles.infoTextContainer}>
+              <Text style={styles.infoLabel}>Meeting Times</Text>
+              <Text style={styles.infoValue}>Sundays 10:00 AM • Wednesdays 7:00 PM</Text>
+            </View>
+            <Ionicons name="chevron-down" size={20} color="#8e8e93" />
           </View>
         </View>
 
-        {/* Description Section */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Description</Text>
-          <Text style={styles.description}>
-            {groupData?.caption || 'Join us for fellowship, worship, and community. We meet weekly to grow in faith together.'}
-          </Text>
+          <View style={styles.infoRow}>
+            <Ionicons name="people-outline" size={22} color="#007aff" />
+            <View style={styles.infoTextContainer}>
+              <Text style={styles.infoLabel}>Community</Text>
+              <Text style={styles.infoValue}>Young Adults (18-35)</Text>
+            </View>
+            <Ionicons name="chevron-down" size={20} color="#8e8e93" />
+          </View>
         </View>
 
-        {/* Contact Information */}
+        {/* What We Offer Section */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Contact</Text>
-          <TouchableOpacity style={styles.contactItem}>
-            <Ionicons name="globe-outline" size={20} color="#007aff" />
-            <Text style={styles.contactText}>Visit Website</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.contactItem}>
-            <Ionicons name="mail-outline" size={20} color="#007aff" />
-            <Text style={styles.contactText}>Send Email</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.contactItem}>
-            <Ionicons name="call-outline" size={20} color="#007aff" />
-            <Text style={styles.contactText}>Call</Text>
-          </TouchableOpacity>
+          <Text style={styles.sectionTitle}>What We Offer</Text>
+          <View style={styles.offerGrid}>
+            <View style={styles.offerItem}>
+              <Ionicons name="book-outline" size={28} color="#007aff" />
+              <Text style={styles.offerText}>Bible Study</Text>
+            </View>
+            <View style={styles.offerItem}>
+              <Ionicons name="musical-notes-outline" size={28} color="#007aff" />
+              <Text style={styles.offerText}>Worship</Text>
+            </View>
+            <View style={styles.offerItem}>
+              <Ionicons name="heart-outline" size={28} color="#007aff" />
+              <Text style={styles.offerText}>Fellowship</Text>
+            </View>
+            <View style={styles.offerItem}>
+              <Ionicons name="cafe-outline" size={28} color="#007aff" />
+              <Text style={styles.offerText}>Social Events</Text>
+            </View>
+          </View>
         </View>
 
         {/* Meeting Times */}
@@ -155,6 +196,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 16,
     paddingVertical: 12,
+    backgroundColor: '#ffffff',
   },
   backButton: {
     padding: 4,
@@ -167,117 +209,174 @@ const styles = StyleSheet.create({
   moreButton: {
     padding: 4,
   },
-  profileSection: {
-    alignItems: 'center',
+  heroSection: {
+    paddingHorizontal: 16,
     paddingVertical: 24,
-    borderBottomWidth: 1,
-    borderBottomColor: '#e5e5e7',
+    backgroundColor: '#ffffff',
+    borderBottomWidth: 8,
+    borderBottomColor: '#f2f2f7',
   },
   avatarContainer: {
     marginBottom: 16,
   },
   avatar: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
+    width: 80,
+    height: 80,
+    borderRadius: 40,
     backgroundColor: '#f2f2f7',
     justifyContent: 'center',
     alignItems: 'center',
   },
   groupTitle: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: '700',
     color: '#000000',
-    marginBottom: 4,
+    marginBottom: 8,
   },
-  username: {
-    fontSize: 16,
-    color: '#8e8e93',
-    marginBottom: 20,
-  },
-  statsRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 24,
-  },
-  statItem: {
-    alignItems: 'center',
-    paddingHorizontal: 20,
-  },
-  statNumber: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#000000',
-    marginBottom: 4,
-  },
-  statLabel: {
-    fontSize: 13,
-    color: '#8e8e93',
-  },
-  statDivider: {
-    width: 1,
-    height: 30,
-    backgroundColor: '#e5e5e7',
-  },
-  actionButtons: {
-    flexDirection: 'row',
-    gap: 12,
-  },
-  followButton: {
-    backgroundColor: '#007aff',
-    paddingHorizontal: 48,
-    paddingVertical: 12,
-    borderRadius: 8,
-  },
-  followButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#ffffff',
-  },
-  messageButton: {
-    backgroundColor: '#f2f2f7',
-    width: 48,
-    height: 48,
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  section: {
-    paddingHorizontal: 16,
-    paddingVertical: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#e5e5e7',
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#000000',
-    marginBottom: 16,
-  },
-  infoRow: {
+  ratingRow: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 12,
   },
-  infoText: {
+  ratingText: {
     fontSize: 15,
+    fontWeight: '600',
     color: '#000000',
-    marginLeft: 12,
+    marginLeft: 4,
+  },
+  metaText: {
+    fontSize: 15,
+    color: '#8e8e93',
   },
   description: {
     fontSize: 15,
     color: '#000000',
     lineHeight: 22,
+    marginBottom: 20,
   },
-  contactItem: {
+  actionButtons: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  joinButton: {
+    flex: 1,
+    backgroundColor: '#7c3aed',
+    paddingVertical: 14,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  joinButtonText: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#ffffff',
+  },
+  shareButton: {
+    backgroundColor: '#f2f2f7',
+    width: 48,
+    height: 48,
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  tabContainer: {
+    flexDirection: 'row',
+    backgroundColor: '#ffffff',
+    borderBottomWidth: 1,
+    borderBottomColor: '#e5e5e7',
+  },
+  tab: {
+    flex: 1,
+    paddingVertical: 14,
+    alignItems: 'center',
+    borderBottomWidth: 2,
+    borderBottomColor: 'transparent',
+  },
+  activeTab: {
+    borderBottomColor: '#7c3aed',
+  },
+  tabText: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#8e8e93',
+  },
+  activeTabText: {
+    color: '#7c3aed',
+  },
+  section: {
+    paddingHorizontal: 16,
+    paddingVertical: 20,
+    backgroundColor: '#ffffff',
+    borderBottomWidth: 8,
+    borderBottomColor: '#f2f2f7',
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#000000',
+    marginBottom: 16,
+  },
+  addressText: {
+    fontSize: 16,
+    color: '#000000',
+    marginLeft: 8,
+    flex: 1,
+  },
+  directionsButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    backgroundColor: '#f2f2f7',
+    borderRadius: 8,
+    alignSelf: 'flex-start',
+  },
+  directionsText: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#007aff',
+    marginLeft: 6,
+  },
+  infoRow: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 12,
   },
-  contactText: {
-    fontSize: 16,
-    color: '#007aff',
+  infoTextContainer: {
+    flex: 1,
     marginLeft: 12,
+  },
+  infoLabel: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#000000',
+    marginBottom: 2,
+  },
+  infoValue: {
+    fontSize: 14,
+    color: '#8e8e93',
+  },
+  offerGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 16,
+  },
+  offerItem: {
+    width: '47%',
+    backgroundColor: '#f2f2f7',
+    padding: 20,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  offerText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#000000',
+    marginTop: 8,
   },
   meetingItem: {
     flexDirection: 'row',
@@ -312,4 +411,6 @@ const styles = StyleSheet.create({
     color: '#8e8e93',
   },
 });
+
+
 

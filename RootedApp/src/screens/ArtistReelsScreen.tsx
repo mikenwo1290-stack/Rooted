@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -11,6 +11,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import { Video, ResizeMode, AVPlaybackStatus } from 'expo-av';
 
 const { height, width } = Dimensions.get('window');
 
@@ -18,6 +19,7 @@ interface Song {
   id: string;
   title: string;
   thumbnail: string;
+  videoUrl: string;
   views: string;
   duration: string;
 }
@@ -36,7 +38,9 @@ export default function ArtistReelsScreen() {
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const [likedSongs, setLikedSongs] = useState<Set<string>>(new Set());
   const [savedSongs, setSavedSongs] = useState<Set<string>>(new Set());
+  const [isPlaying, setIsPlaying] = useState<{ [key: string]: boolean }>({});
   const flatListRef = useRef<FlatList>(null);
+  const videoRefs = useRef<{ [key: string]: Video | null }>({});
 
   // Scroll to initial song on mount
   React.useEffect(() => {
@@ -49,13 +53,38 @@ export default function ArtistReelsScreen() {
 
   const onViewableItemsChanged = useRef(({ viewableItems }: any) => {
     if (viewableItems.length > 0) {
-      setCurrentIndex(viewableItems[0].index || 0);
+      const newIndex = viewableItems[0].index || 0;
+      setCurrentIndex(newIndex);
+      
+      // Pause all videos except the current one
+      songs.forEach((song, index) => {
+        if (index !== newIndex && videoRefs.current[song.id]) {
+          videoRefs.current[song.id]?.pauseAsync();
+          setIsPlaying(prev => ({ ...prev, [song.id]: false }));
+        }
+      });
     }
   }).current;
 
   const viewabilityConfig = useRef({
     itemVisiblePercentThreshold: 50,
   }).current;
+
+  const togglePlayPause = async (songId: string) => {
+    const video = videoRefs.current[songId];
+    if (video) {
+      const status = await video.getStatusAsync();
+      if (status.isLoaded) {
+        if (status.isPlaying) {
+          await video.pauseAsync();
+          setIsPlaying(prev => ({ ...prev, [songId]: false }));
+        } else {
+          await video.playAsync();
+          setIsPlaying(prev => ({ ...prev, [songId]: true }));
+        }
+      }
+    }
+  };
 
   const toggleLike = (songId: string) => {
     setLikedSongs((prev) => {
@@ -84,6 +113,7 @@ export default function ArtistReelsScreen() {
   const renderSongReel = ({ item, index }: { item: Song; index: number }) => {
     const isLiked = likedSongs.has(item.id);
     const isSaved = savedSongs.has(item.id);
+    const isVideoPlaying = isPlaying[item.id] || false;
     const numericViews = parseFloat(item.views.replace(/[MK]/g, '')) * (item.views.includes('M') ? 1000000 : 1000);
     const likes = Math.floor(numericViews * 0.15);
     const comments = Math.floor(numericViews * 0.05);
@@ -91,11 +121,27 @@ export default function ArtistReelsScreen() {
 
     return (
       <View style={styles.reelContainer}>
-        <ImageBackground
-          source={{ uri: item.thumbnail }}
-          style={styles.reelBackground}
-          resizeMode="cover"
+        <TouchableOpacity 
+          style={styles.videoTouchable}
+          activeOpacity={1}
+          onPress={() => togglePlayPause(item.id)}
         >
+          <Video
+            ref={(ref) => {
+              if (ref) {
+                videoRefs.current[item.id] = ref;
+              }
+            }}
+            source={{ uri: item.videoUrl || item.thumbnail }}
+            style={styles.reelBackground}
+            resizeMode={ResizeMode.COVER}
+            isLooping
+            shouldPlay={false}
+            usePoster
+            posterSource={{ uri: item.thumbnail }}
+            posterStyle={styles.reelBackground}
+          />
+
           {/* Dark overlay for better text visibility */}
           <View style={styles.darkOverlay} />
 
@@ -121,7 +167,15 @@ export default function ArtistReelsScreen() {
                 <View style={styles.artistAvatar}>
                   <Ionicons name="person" size={20} color="#ffffff" />
                 </View>
-                <Text style={styles.artistName}>{artistName}</Text>
+                <Text
+                  style={styles.artistName}
+                  numberOfLines={1}
+                  adjustsFontSizeToFit
+                  minimumFontScale={0.8}
+                  ellipsizeMode="clip"
+                >
+                  {artistName}
+                </Text>
               </View>
               
               {/* Song Title */}
@@ -189,24 +243,28 @@ export default function ArtistReelsScreen() {
             </View>
           </View>
 
-          {/* Play button in center */}
-          <View style={styles.playButtonContainer}>
-            <TouchableOpacity style={styles.playButton}>
-              <Ionicons name="play" size={40} color="#ffffff" />
-            </TouchableOpacity>
-          </View>
-
-          {/* Audio wave animation indicator (visual only) */}
-          <View style={styles.audioIndicator}>
-            <Ionicons name="musical-notes" size={20} color="#ffffff" />
-            <View style={styles.waveContainer}>
-              <View style={[styles.wave, styles.wave1]} />
-              <View style={[styles.wave, styles.wave2]} />
-              <View style={[styles.wave, styles.wave3]} />
-              <View style={[styles.wave, styles.wave4]} />
+          {/* Play/Pause button in center - only show when paused */}
+          {!isVideoPlaying && (
+            <View style={styles.playButtonContainer}>
+              <View style={styles.playButton}>
+                <Ionicons name="play" size={40} color="#ffffff" />
+              </View>
             </View>
-          </View>
-        </ImageBackground>
+          )}
+
+          {/* Audio wave animation indicator (visual only) - show when playing */}
+          {isVideoPlaying && (
+            <View style={styles.audioIndicator}>
+              <Ionicons name="musical-notes" size={20} color="#ffffff" />
+              <View style={styles.waveContainer}>
+                <View style={[styles.wave, styles.wave1]} />
+                <View style={[styles.wave, styles.wave2]} />
+                <View style={[styles.wave, styles.wave3]} />
+                <View style={[styles.wave, styles.wave4]} />
+              </View>
+            </View>
+          )}
+        </TouchableOpacity>
       </View>
     );
   };
@@ -251,15 +309,22 @@ const styles = StyleSheet.create({
     height: height,
     width: width,
   },
-  reelBackground: {
+  videoTouchable: {
     flex: 1,
-    justifyContent: 'space-between',
+  },
+  reelBackground: {
+    width: '100%',
+    height: '100%',
   },
   darkOverlay: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: 'rgba(0, 0, 0, 0.3)',
   },
   topOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -293,6 +358,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   bottomOverlay: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
     flexDirection: 'row',
     paddingHorizontal: 16,
     paddingBottom: 32,
@@ -301,12 +370,14 @@ const styles = StyleSheet.create({
   },
   infoContainer: {
     flex: 1,
-    marginRight: 16,
+    marginRight: 28,
+    maxWidth: '72%',
   },
   artistInfo: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 12,
+    maxWidth: '100%',
   },
   artistAvatar: {
     width: 36,
@@ -326,6 +397,9 @@ const styles = StyleSheet.create({
     textShadowColor: 'rgba(0, 0, 0, 0.75)',
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 3,
+    includeFontPadding: false,
+    flex: 1,
+    flexShrink: 1,
   },
   songTitle: {
     fontSize: 18,

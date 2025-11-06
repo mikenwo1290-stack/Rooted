@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -11,6 +11,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { Video, ResizeMode, AVPlaybackStatus } from 'expo-av';
 
 const { height, width } = Dimensions.get('window');
 
@@ -26,6 +27,7 @@ interface EventVideo {
   shares: number;
   attending: number;
   thumbnail: string;
+  videoUrl: string;
   organizer: string;
   description: string;
 }
@@ -43,6 +45,7 @@ const eventVideos: EventVideo[] = [
     shares: 89,
     attending: 456,
     thumbnail: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=400&h=800&fit=crop',
+    videoUrl: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
     organizer: 'Grace Community Church',
     description: 'Join us for an incredible night of gospel music featuring top artists',
   },
@@ -58,6 +61,7 @@ const eventVideos: EventVideo[] = [
     shares: 45,
     attending: 234,
     thumbnail: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=400&h=800&fit=crop',
+    videoUrl: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
     organizer: 'Grace Young Adults',
     description: 'An evening of worship, prayer, and fellowship with young adults',
   },
@@ -73,6 +77,7 @@ const eventVideos: EventVideo[] = [
     shares: 34,
     attending: 178,
     thumbnail: 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=400&h=800&fit=crop',
+    videoUrl: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
     organizer: 'Hope Church',
     description: 'A night of prayer, fasting, and seeking God\'s presence together',
   },
@@ -88,6 +93,7 @@ const eventVideos: EventVideo[] = [
     shares: 123,
     attending: 589,
     thumbnail: 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=400&h=800&fit=crop',
+    videoUrl: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
     organizer: 'Word of Life Young Adults',
     description: 'Empowering the next generation through worship and teaching',
   },
@@ -103,6 +109,7 @@ const eventVideos: EventVideo[] = [
     shares: 56,
     attending: 145,
     thumbnail: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=400&h=800&fit=crop',
+    videoUrl: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
     organizer: 'Faith Community',
     description: 'Serve meals and minister to those in need in our community',
   },
@@ -118,6 +125,7 @@ const eventVideos: EventVideo[] = [
     shares: 178,
     attending: 789,
     thumbnail: 'https://images.unsplash.com/photo-1524368535928-5b5e00ddc76b?w=400&h=800&fit=crop',
+    videoUrl: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4',
     organizer: 'United Worship',
     description: 'A powerful night of praise and worship with live bands',
   },
@@ -128,17 +136,44 @@ export default function EventVideoFeedScreen() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [likedVideos, setLikedVideos] = useState<Set<string>>(new Set());
   const [attendingVideos, setAttendingVideos] = useState<Set<string>>(new Set());
+  const [isPlaying, setIsPlaying] = useState<{ [key: string]: boolean }>({});
   const flatListRef = useRef<FlatList>(null);
+  const videoRefs = useRef<{ [key: string]: Video | null }>({});
 
   const onViewableItemsChanged = useRef(({ viewableItems }: any) => {
     if (viewableItems.length > 0) {
-      setCurrentIndex(viewableItems[0].index || 0);
+      const newIndex = viewableItems[0].index || 0;
+      setCurrentIndex(newIndex);
+      
+      // Pause all videos except the current one
+      eventVideos.forEach((video, index) => {
+        if (index !== newIndex && videoRefs.current[video.id]) {
+          videoRefs.current[video.id]?.pauseAsync();
+          setIsPlaying(prev => ({ ...prev, [video.id]: false }));
+        }
+      });
     }
   }).current;
 
   const viewabilityConfig = useRef({
     itemVisiblePercentThreshold: 50,
   }).current;
+
+  const togglePlayPause = async (videoId: string) => {
+    const video = videoRefs.current[videoId];
+    if (video) {
+      const status = await video.getStatusAsync();
+      if (status.isLoaded) {
+        if (status.isPlaying) {
+          await video.pauseAsync();
+          setIsPlaying(prev => ({ ...prev, [videoId]: false }));
+        } else {
+          await video.playAsync();
+          setIsPlaying(prev => ({ ...prev, [videoId]: true }));
+        }
+      }
+    }
+  };
 
   const toggleLike = (videoId: string) => {
     setLikedVideos((prev) => {
@@ -167,14 +202,31 @@ export default function EventVideoFeedScreen() {
   const renderEventVideo = ({ item }: { item: EventVideo }) => {
     const isLiked = likedVideos.has(item.id);
     const isAttending = attendingVideos.has(item.id);
+    const isVideoPlaying = isPlaying[item.id] || false;
 
     return (
       <View style={styles.videoContainer}>
-        <ImageBackground
-          source={{ uri: item.thumbnail }}
-          style={styles.videoBackground}
-          resizeMode="cover"
+        <TouchableOpacity 
+          style={styles.videoTouchable}
+          activeOpacity={1}
+          onPress={() => togglePlayPause(item.id)}
         >
+          <Video
+            ref={(ref) => {
+              if (ref) {
+                videoRefs.current[item.id] = ref;
+              }
+            }}
+            source={{ uri: item.videoUrl }}
+            style={styles.videoBackground}
+            resizeMode={ResizeMode.COVER}
+            isLooping
+            shouldPlay={false}
+            usePoster
+            posterSource={{ uri: item.thumbnail }}
+            posterStyle={styles.videoBackground}
+          />
+
           {/* Dark overlay for better text visibility */}
           <View style={styles.darkOverlay} />
 
@@ -201,7 +253,15 @@ export default function EventVideoFeedScreen() {
                 <View style={styles.organizerAvatar}>
                   <Ionicons name="business" size={20} color="#ffffff" />
                 </View>
-                <Text style={styles.organizerName}>{item.organizer}</Text>
+                <Text
+                  style={styles.organizerName}
+                  numberOfLines={1}
+                  adjustsFontSizeToFit
+                  minimumFontScale={0.8}
+                  ellipsizeMode="clip"
+                >
+                  {item.organizer}
+                </Text>
               </View>
               
               {/* Event Title and Details */}
@@ -238,7 +298,6 @@ export default function EventVideoFeedScreen() {
                   size={32} 
                   color={isLiked ? "#ff4444" : "#ffffff"} 
                 />
-                <Text style={styles.actionText}>{item.likes + (isLiked ? 1 : 0)}</Text>
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.actionButton}>
@@ -271,13 +330,15 @@ export default function EventVideoFeedScreen() {
             </View>
           </View>
 
-          {/* Play button in center (optional) */}
-          <View style={styles.playButtonContainer}>
-            <TouchableOpacity style={styles.playButton}>
-              <Ionicons name="play" size={32} color="#ffffff" />
-            </TouchableOpacity>
-          </View>
-        </ImageBackground>
+          {/* Play/Pause button in center - only show when paused */}
+          {!isVideoPlaying && (
+            <View style={styles.playButtonContainer}>
+              <View style={styles.playButton}>
+                <Ionicons name="play" size={32} color="#ffffff" />
+              </View>
+            </View>
+          )}
+        </TouchableOpacity>
       </View>
     );
   };
@@ -315,15 +376,22 @@ const styles = StyleSheet.create({
     height: height,
     width: width,
   },
-  videoBackground: {
+  videoTouchable: {
     flex: 1,
-    justifyContent: 'space-between',
+  },
+  videoBackground: {
+    width: '100%',
+    height: '100%',
   },
   darkOverlay: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: 'rgba(0, 0, 0, 0.3)',
   },
   topOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -353,6 +421,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   bottomOverlay: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
     flexDirection: 'row',
     paddingHorizontal: 16,
     paddingBottom: 32,
@@ -361,12 +433,14 @@ const styles = StyleSheet.create({
   },
   infoContainer: {
     flex: 1,
-    marginRight: 16,
+    marginRight: 28,
+    maxWidth: '72%',
   },
   organizerInfo: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 12,
+    maxWidth: '100%',
   },
   organizerAvatar: {
     width: 40,
@@ -386,6 +460,8 @@ const styles = StyleSheet.create({
     textShadowColor: 'rgba(0, 0, 0, 0.75)',
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 3,
+    includeFontPadding: false,
+    flex: 1,
   },
   eventTitle: {
     fontSize: 20,
@@ -401,6 +477,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 6,
     gap: 8,
+    maxWidth: '100%',
   },
   categoryBadge: {
     backgroundColor: '#8B6F47',
@@ -419,6 +496,8 @@ const styles = StyleSheet.create({
     textShadowColor: 'rgba(0, 0, 0, 0.75)',
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 3,
+    flex: 1,
+    flexShrink: 1,
   },
   eventDateTimeRow: {
     flexDirection: 'row',

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -6,16 +6,18 @@ import {
   Dimensions,
   FlatList,
   TouchableOpacity,
+  Image,
   ImageBackground,
+  StatusBar,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { Video, AVPlaybackStatus } from 'expo-av';
-import { LinearGradient } from 'expo-linear-gradient';
+import { Video, ResizeMode, AVPlaybackStatus, Audio } from 'expo-av';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const { height, width } = Dimensions.get('window');
 
-interface VideoData {
+interface VideoItem {
   id: string;
   title: string;
   category: string;
@@ -23,15 +25,11 @@ interface VideoData {
   likes: number;
   comments: number;
   shares: number;
-  thumbnail: string;
-  videoUrl?: string;
+  videoUrl: string;
   author: string;
-  authorAvatar: string;
-  username: string;
-  caption: string;
 }
 
-const videos: VideoData[] = [
+const videos: VideoItem[] = [
   {
     id: '1',
     title: 'Young Life VA',
@@ -40,12 +38,8 @@ const videos: VideoData[] = [
     likes: 234,
     comments: 45,
     shares: 12,
-    thumbnail: 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=400&h=800&fit=crop',
     videoUrl: 'https://firebasestorage.googleapis.com/v0/b/rooted-90e83.firebasestorage.app/o/Move%20Church.mp4?alt=media&token=25aa211b-2e8c-453c-b787-74256e2575dd',
     author: 'Young Life VA',
-    authorAvatar: '',
-    username: '@younglife_virginia',
-    caption: 'Sunday worship night highlights 🙏✨',
   },
   {
     id: '2',
@@ -55,12 +49,8 @@ const videos: VideoData[] = [
     likes: 567,
     comments: 89,
     shares: 34,
-    thumbnail: 'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=400&h=800&fit=crop',
     videoUrl: 'https://firebasestorage.googleapis.com/v0/b/rooted-90e83.firebasestorage.app/o/CornerstoneYA.mp4?alt=media&token=ea5cdd5a-9a69-4546-aeac-62b0698c0be5',
     author: 'Cornerstone YA',
-    authorAvatar: '',
-    username: '@cornerstone_ya',
-    caption: '"I thought you said youth ended at 10"',
   },
   {
     id: '3',
@@ -70,12 +60,8 @@ const videos: VideoData[] = [
     likes: 892,
     comments: 156,
     shares: 67,
-    thumbnail: 'https://images.unsplash.com/photo-1517230878791-4d28214057c2?w=400&h=800&fit=crop',
     videoUrl: 'https://firebasestorage.googleapis.com/v0/b/rooted-90e83.firebasestorage.app/o/CityLigtht.mp4?alt=media&token=ab04fd54-0c74-4baf-81c4-9cd54cfa598b',
     author: 'City Light Young Adults',
-    authorAvatar: '',
-    username: '@citylight_youngadults',
-    caption: 'Powerful worship experience tonight 🔥',
   },
   {
     id: '4',
@@ -85,237 +71,78 @@ const videos: VideoData[] = [
     likes: 445,
     comments: 78,
     shares: 23,
-    thumbnail: 'https://images.unsplash.com/photo-1502086223501-7ea6ecd79368?w=400&h=800&fit=crop',
     videoUrl: 'https://firebasestorage.googleapis.com/v0/b/rooted-90e83.firebasestorage.app/o/WordOfLife.mp4?alt=media&token=e693a96c-05ec-4927-9d10-1ee4fb134a05',
     author: 'Word of Life Young Adults',
-    authorAvatar: '',
-    username: '@wordoflife_ya',
-    caption: 'Fellowship and community at its best! 💫',
   },
 ];
-
-
-type VideoItemProps = {
-  item: VideoData;
-  index: number;
-  currentIndex: number;
-  onBackPress: () => void;
-  onUsernamePress: () => void;
-};
-
-const VideoItem = ({ item, index, currentIndex, onBackPress, onUsernamePress }: VideoItemProps) => {
-  const videoRef = useRef<Video>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [isLiked, setIsLiked] = useState(false);
-  const [isBookmarked, setIsBookmarked] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [duration, setDuration] = useState(0);
-
-  useEffect(() => {
-    let isMounted = true;
-
-    const controlPlayback = async () => {
-      if (!videoRef.current) {
-        return;
-      }
-
-      try {
-        if (index === currentIndex && item.videoUrl) {
-          await videoRef.current.playAsync();
-          if (isMounted) {
-            setIsPlaying(true);
-          }
-        } else {
-          await videoRef.current.pauseAsync();
-          if (isMounted) {
-            setIsPlaying(false);
-          }
-        }
-      } catch (error) {
-        console.warn('Video playback control error:', error);
-      }
-    };
-
-    controlPlayback();
-
-    return () => {
-      isMounted = false;
-      if (videoRef.current) {
-        videoRef.current.pauseAsync().catch(() => undefined);
-      }
-    };
-  }, [currentIndex, index, item.videoUrl]);
-
-  const handlePlaybackStatusUpdate = (status: AVPlaybackStatus) => {
-    if (status.isLoaded) {
-      setProgress(status.positionMillis);
-      setDuration(status.durationMillis || 0);
-    }
-  };
-
-  const handlePlayPause = async () => {
-    if (!videoRef.current) {
-      return;
-    }
-
-    try {
-      if (isPlaying) {
-        await videoRef.current.pauseAsync();
-        setIsPlaying(false);
-      } else {
-        await videoRef.current.playAsync();
-        setIsPlaying(true);
-      }
-    } catch (error) {
-      console.warn('Play/Pause error:', error);
-    }
-  };
-
-  const toggleLike = () => {
-    setIsLiked(!isLiked);
-  };
-
-  const toggleBookmark = () => {
-    setIsBookmarked(!isBookmarked);
-  };
-
-  const progressPercentage = duration > 0 ? (progress / duration) * 100 : 0;
-
-  return (
-    <TouchableOpacity 
-      style={styles.videoContainer}
-      onPress={handlePlayPause}
-      activeOpacity={1}
-    >
-      {/* Video Container - Centered 9:16 aspect ratio */}
-      <View style={styles.centeredVideoWrapper}>
-        {item.videoUrl ? (
-          <Video
-            ref={videoRef}
-            source={{ uri: item.videoUrl }}
-            style={styles.videoBackground}
-            resizeMode="cover"
-            isLooping
-            shouldPlay={false}
-            useNativeControls={false}
-            onPlaybackStatusUpdate={handlePlaybackStatusUpdate}
-          />
-        ) : (
-          <ImageBackground
-            source={{ uri: item.thumbnail }}
-            style={styles.videoBackground}
-            resizeMode="cover"
-          />
-        )}
-      </View>
-
-      {/* Dark overlay for better UI visibility */}
-      <LinearGradient
-        colors={['rgba(0,0,0,0.3)', 'transparent', 'rgba(0,0,0,0.6)']}
-        style={styles.gradientOverlay}
-        pointerEvents="none"
-      />
-
-      {/* Back button - top left */}
-      <TouchableOpacity
-        style={styles.backButton}
-        onPress={onBackPress}
-      >
-        <Ionicons name="arrow-back" size={24} color="#ffffff" />
-      </TouchableOpacity>
-
-      {/* Right side actions */}
-      <View style={styles.actionsContainer} pointerEvents="box-none">
-        <TouchableOpacity 
-          style={styles.actionButton} 
-          onPress={toggleLike}
-          activeOpacity={0.7}
-        >
-          <Ionicons 
-            name={isLiked ? 'heart' : 'heart-outline'} 
-            size={36} 
-            color={isLiked ? '#E3B05E' : '#ffffff'} 
-          />
-          <Text style={[styles.actionText, isLiked && styles.actionTextGold]}>
-            {item.likes + (isLiked ? 1 : 0)}
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.actionButton} activeOpacity={0.7}>
-          <Ionicons name="chatbubble-outline" size={36} color="#ffffff" />
-          <Text style={styles.actionText}>{item.comments}</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.actionButton} activeOpacity={0.7}>
-          <Ionicons name="share-outline" size={36} color="#ffffff" />
-          <Text style={styles.actionText}>{item.shares}</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity 
-          style={styles.actionButton} 
-          onPress={toggleBookmark}
-          activeOpacity={0.7}
-        >
-          <Ionicons 
-            name={isBookmarked ? 'bookmark' : 'bookmark-outline'} 
-            size={36} 
-            color={isBookmarked ? '#E3B05E' : '#ffffff'} 
-          />
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.actionButton} activeOpacity={0.7}>
-          <Ionicons name="ellipsis-horizontal" size={32} color="#ffffff" />
-        </TouchableOpacity>
-      </View>
-
-      {/* Bottom info section */}
-      <View style={styles.bottomInfo} pointerEvents="box-none">
-        <TouchableOpacity 
-          onPress={onUsernamePress}
-          activeOpacity={0.7}
-        >
-          <Text style={styles.username}>{item.username}</Text>
-        </TouchableOpacity>
-        <Text style={styles.caption}>{item.caption}</Text>
-      </View>
-
-      {/* Progress bar at the bottom */}
-      <View style={styles.progressBarContainer} pointerEvents="none">
-        <View style={styles.progressBarBackground}>
-          <View 
-            style={[
-              styles.progressBarFill, 
-              { width: `${progressPercentage}%` }
-            ]} 
-          />
-        </View>
-      </View>
-    </TouchableOpacity>
-  );
-};
 
 export default function VideoFeedScreen() {
   const navigation = useNavigation();
   const route = useRoute();
-  const params = route.params as { initialIndex?: number } | undefined;
-  const initialIndex = params?.initialIndex ?? 0;
+  const params = route.params as any;
+  const initialIndex = params?.initialIndex || 0;
+  const insets = useSafeAreaInsets();
+  
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
+  const [isPlaying, setIsPlaying] = useState<{ [key: string]: boolean }>({});
+  const [isMuted, setIsMuted] = useState(false);
   const flatListRef = useRef<FlatList>(null);
+  const videoRefs = useRef<{ [key: string]: Video | null }>({});
+  const [isReady, setIsReady] = useState(false);
 
+  // Configure audio session for video playback
   useEffect(() => {
-    if (initialIndex > 0 && flatListRef.current) {
-      setTimeout(() => {
-        flatListRef.current?.scrollToIndex({
-          index: initialIndex,
-          animated: false,
+    const configureAudio = async () => {
+      try {
+        await Audio.setAudioModeAsync({
+          playsInSilentModeIOS: true,
+          staysActiveInBackground: false,
+          shouldDuckAndroid: true,
         });
-      }, 100);
+      } catch (error) {
+        console.log('Error configuring audio:', error);
+      }
+    };
+    
+    configureAudio();
+  }, []);
+
+  // Auto-play the initial video
+  useEffect(() => {
+    if (!isReady) {
+      // Small delay to ensure video is rendered
+      const timer = setTimeout(() => {
+        const initialVideo = videos[initialIndex];
+        if (initialVideo && videoRefs.current[initialVideo.id]) {
+          videoRefs.current[initialVideo.id]?.playAsync();
+          setIsPlaying(prev => ({ ...prev, [initialVideo.id]: true }));
+        }
+        setIsReady(true);
+      }, 500);
+      
+      return () => clearTimeout(timer);
     }
-  }, [initialIndex]);
+  }, [initialIndex, isReady]);
 
   const onViewableItemsChanged = useRef(({ viewableItems }: any) => {
     if (viewableItems.length > 0) {
-      setCurrentIndex(viewableItems[0].index || 0);
+      const newIndex = viewableItems[0].index || 0;
+      setCurrentIndex(newIndex);
+      
+      // Pause all videos except the current one
+      videos.forEach((video, index) => {
+        if (index !== newIndex && videoRefs.current[video.id]) {
+          videoRefs.current[video.id]?.pauseAsync();
+          setIsPlaying(prev => ({ ...prev, [video.id]: false }));
+        }
+      });
+      
+      // Auto-play the new current video
+      const currentVideo = videos[newIndex];
+      if (currentVideo && videoRefs.current[currentVideo.id]) {
+        videoRefs.current[currentVideo.id]?.playAsync();
+        setIsPlaying(prev => ({ ...prev, [currentVideo.id]: true }));
+      }
     }
   }).current;
 
@@ -323,19 +150,140 @@ export default function VideoFeedScreen() {
     itemVisiblePercentThreshold: 50,
   }).current;
 
-  const renderVideo = ({ item, index }: { item: VideoData; index: number }) => (
-    <VideoItem
-      item={item}
-      index={index}
-      currentIndex={currentIndex}
-      onBackPress={() => navigation.goBack()}
-      onUsernamePress={() => navigation.navigate('GroupProfile' as never, { groupData: item } as never)}
-    />
-  );
+  const togglePlayPause = async (videoId: string) => {
+    const video = videoRefs.current[videoId];
+    if (video) {
+      const status = await video.getStatusAsync();
+      if (status.isLoaded) {
+        if (status.isPlaying) {
+          await video.pauseAsync();
+          setIsPlaying(prev => ({ ...prev, [videoId]: false }));
+        } else {
+          await video.playAsync();
+          setIsPlaying(prev => ({ ...prev, [videoId]: true }));
+        }
+      }
+    }
+  };
 
+  const toggleMute = async () => {
+    setIsMuted(!isMuted);
+    // Update all video refs to mute/unmute
+    Object.values(videoRefs.current).forEach(async (video) => {
+      if (video) {
+        await video.setIsMutedAsync(!isMuted);
+      }
+    });
+  };
+
+  const renderVideo = ({ item }: { item: VideoItem }) => {
+    const isVideoPlaying = isPlaying[item.id] || false;
+    
+    return (
+      <View style={styles.videoContainer}>
+        <TouchableOpacity 
+          style={styles.videoTouchable}
+          activeOpacity={1}
+          onPress={() => togglePlayPause(item.id)}
+        >
+          <Video
+            ref={(ref) => {
+              if (ref) {
+                videoRefs.current[item.id] = ref;
+              }
+            }}
+            source={{ uri: item.videoUrl }}
+            style={styles.videoBackground}
+            resizeMode={ResizeMode.COVER}
+            isLooping
+            shouldPlay={false}
+            isMuted={isMuted}
+            volume={1.0}
+          />
+
+          {/* Top overlay with back button */}
+          <View style={[styles.topOverlay, { paddingTop: insets.top + 16 }]}>
+            <TouchableOpacity 
+              style={styles.backButton}
+              onPress={() => navigation.goBack()}
+            >
+              <Ionicons name="arrow-back" size={28} color="#ffffff" />
+            </TouchableOpacity>
+            
+            <TouchableOpacity 
+              style={styles.muteButton}
+              onPress={toggleMute}
+            >
+              <Ionicons 
+                name={isMuted ? "volume-mute" : "volume-high"} 
+                size={24} 
+                color="#ffffff" 
+              />
+            </TouchableOpacity>
+          </View>
+          
+          <StatusBar barStyle="light-content" translucent backgroundColor="transparent" />
+
+          {/* Bottom overlay with info and actions */}
+          <View style={[styles.bottomOverlay, { paddingBottom: insets.bottom + 32 }]}>
+            <View style={styles.infoContainer}>
+              <TouchableOpacity 
+                style={styles.authorInfoButton}
+                onPress={() => navigation.navigate('GroupProfile' as never, {
+                  groupData: {
+                    title: item.title,
+                    category: item.category,
+                    location: item.location,
+                    likes: item.likes,
+                    comments: item.comments,
+                    shares: item.shares,
+                    author: item.author,
+                    username: `@${item.author.toLowerCase().replace(/\s+/g, '')}`,
+                  }
+                } as never)}
+                activeOpacity={0.7}
+              >
+                <View style={styles.authorAvatar}>
+                  <Ionicons name="person" size={32} color="#ffffff" />
+                </View>
+                <View style={styles.authorTextContainer}>
+                  <View style={styles.authorNameRow}>
+                    <Text
+                      style={styles.authorName}
+                      numberOfLines={2}
+                    >
+                      {item.author}
+                    </Text>
+                    <Ionicons name="chevron-forward" size={16} color="#ffffff" style={styles.chevronIcon} />
+                  </View>
+                  <Text style={styles.videoMeta}>{item.location}</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+
+            {/* Action buttons on the right */}
+            <View style={styles.actionsContainer}>
+              <TouchableOpacity style={styles.actionButton}>
+                <Ionicons name="bookmark-outline" size={36} color="#ffffff" />
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          {/* Play/Pause button in center - only show when paused */}
+          {!isVideoPlaying && (
+            <View style={styles.playButtonContainer}>
+              <View style={styles.playButton}>
+                <Ionicons name="play" size={32} color="#ffffff" />
+              </View>
+            </View>
+          )}
+        </TouchableOpacity>
+      </View>
+    );
+  };
 
   return (
-    <View style={styles.fullScreenContainer}>
+    <View style={styles.container}>
       <FlatList
         ref={flatListRef}
         data={videos}
@@ -348,21 +296,27 @@ export default function VideoFeedScreen() {
         decelerationRate="fast"
         onViewableItemsChanged={onViewableItemsChanged}
         viewabilityConfig={viewabilityConfig}
+        initialScrollIndex={initialIndex}
         getItemLayout={(data, index) => ({
           length: height,
           offset: height * index,
           index,
         })}
+        onScrollToIndexFailed={(info) => {
+          // Fallback: wait and try again
+          setTimeout(() => {
+            flatListRef.current?.scrollToIndex({
+              index: info.index,
+              animated: false,
+            });
+          }, 100);
+        }}
       />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  fullScreenContainer: {
-    flex: 1,
-    backgroundColor: '#000000',
-  },
   container: {
     flex: 1,
     backgroundColor: '#000000',
@@ -370,107 +324,157 @@ const styles = StyleSheet.create({
   videoContainer: {
     height: height,
     width: width,
-    position: 'relative',
-    backgroundColor: '#000000',
-    justifyContent: 'center',
-    alignItems: 'center',
   },
-  centeredVideoWrapper: {
-    width: '100%',
-    maxWidth: width < 500 ? width : width * 0.6,
-    height: '100%',
-    position: 'absolute',
-    top: 0,
-    left: '50%',
-    transform: [{ translateX: -(width < 500 ? width : width * 0.6) / 2 }],
+  videoTouchable: {
+    flex: 1,
   },
   videoBackground: {
     width: '100%',
     height: '100%',
   },
-  gradientOverlay: {
+  topOverlay: {
     position: 'absolute',
+    top: 0,
     left: 0,
     right: 0,
-    top: 0,
-    bottom: 0,
-    zIndex: 1,
+    paddingHorizontal: 16,
+    paddingBottom: 16,
+    zIndex: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
   },
   backButton: {
-    position: 'absolute',
-    top: 60,
-    left: 20,
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
     justifyContent: 'center',
     alignItems: 'center',
-    zIndex: 10,
   },
-  actionsContainer: {
+  muteButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  bottomOverlay: {
     position: 'absolute',
-    right: 16,
-    bottom: height * 0.25,
-    alignItems: 'center',
-    gap: 20,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    paddingHorizontal: 16,
+    alignItems: 'flex-end',
     zIndex: 10,
   },
-  actionButton: {
-    alignItems: 'center',
-    gap: 4,
+  infoContainer: {
+    flex: 1,
+    marginRight: 28,
+    maxWidth: '72%',
   },
-  actionText: {
-    fontSize: 13,
+  authorInfoButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderRadius: 28,
+    alignSelf: 'flex-start',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.2)',
+    maxWidth: '100%',
+  },
+  authorAvatar: {
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+    borderWidth: 2,
+    borderColor: '#ffffff',
+  },
+  authorTextContainer: {
+    paddingRight: 8,
+    flex: 1,
+    maxWidth: '100%',
+  },
+  authorNameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  authorName: {
+    fontSize: 22,
     fontWeight: '700',
     color: '#ffffff',
     textShadowColor: 'rgba(0, 0, 0, 0.75)',
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 3,
+    marginBottom: 2,
+    flex: 1,
+    flexShrink: 1,
+    includeFontPadding: false,
   },
-  actionTextGold: {
-    color: '#E3B05E',
+  chevronIcon: {
+    marginLeft: 6,
+    opacity: 0.8,
   },
-  bottomInfo: {
-    position: 'absolute',
-    bottom: 100,
-    left: 16,
-    right: 80,
-    zIndex: 10,
-  },
-  username: {
-    fontSize: 22,
+  videoTitle: {
+    fontSize: 18,
     fontWeight: '700',
     color: '#ffffff',
-    marginBottom: 6,
-    textShadowColor: 'rgba(0, 0, 0, 0.9)',
+    marginBottom: 4,
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
     textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 4,
+    textShadowRadius: 3,
   },
-  caption: {
-    fontSize: 16,
+  videoMeta: {
+    fontSize: 14,
     color: '#ffffff',
-    fontWeight: '400',
-    lineHeight: 22,
-    textShadowColor: 'rgba(0, 0, 0, 0.9)',
+    opacity: 0.9,
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
     textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 4,
+    textShadowRadius: 3,
   },
-  progressBarContainer: {
+  actionsContainer: {
+    alignItems: 'center',
+    gap: 20,
+  },
+  actionButton: {
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  actionText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#ffffff',
+    marginTop: 4,
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3,
+  },
+  playButtonContainer: {
     position: 'absolute',
-    bottom: 0,
+    top: 0,
     left: 0,
     right: 0,
-    height: 3,
-    zIndex: 10,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  progressBarBackground: {
-    width: '100%',
-    height: '100%',
+  playButton: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
     backgroundColor: 'rgba(255, 255, 255, 0.3)',
-  },
-  progressBarFill: {
-    height: '100%',
-    backgroundColor: '#E3B05E',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 3,
+    borderColor: '#ffffff',
   },
 });
+
