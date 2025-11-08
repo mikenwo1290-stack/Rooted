@@ -5,8 +5,6 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  Image,
-  Linking,
   ImageBackground,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -60,20 +58,16 @@ export default function GroupProfileScreen() {
         {/* Hero Section */}
         <View style={styles.heroSection}>
           <View style={styles.avatarContainer}>
-            <Image 
-              source={require('../../assets/yl-logo.png')}
-              style={styles.avatar}
-              resizeMode="contain"
-            />
+            <View style={styles.avatar}>
+              <Text style={styles.avatarPlaceholder}>YL</Text>
+            </View>
           </View>
           
           <Text style={styles.groupTitle}>{groupData?.title || 'Young Life VA'}</Text>
           
           <View style={styles.ratingRow}>
-            <Ionicons name="star" size={16} color="#FFB800" />
-            <Text style={styles.ratingText}>4.8</Text>
-            <Text style={styles.metaText}> • {groupData?.category || 'Fellowship'} • </Text>
-            <Text style={styles.metaText}>{groupData?.location || 'Washington DC'}</Text>
+            <Text style={styles.metaText}>{groupData?.category || 'Bible Study'} • </Text>
+            <Text style={styles.metaText}>{groupData?.location || 'Alexandria'}</Text>
           </View>
 
           <Text style={styles.description}>
@@ -123,7 +117,7 @@ export default function GroupProfileScreen() {
           <View style={styles.sectionHeader}>
             <Ionicons name="location" size={20} color="#ff3b30" />
             <Text style={styles.addressText}>
-              1234 Church Street, {groupData?.location || 'Washington DC'}
+              13061 Touchstone Cir #7665, Lake Ridge, VA 22192 USA
             </Text>
           </View>
           <TouchableOpacity style={styles.directionsButton}>
@@ -138,7 +132,7 @@ export default function GroupProfileScreen() {
             <Ionicons name="time-outline" size={22} color="#34c759" />
             <View style={styles.infoTextContainer}>
               <Text style={styles.infoLabel}>Meeting Times</Text>
-              <Text style={styles.infoValue}>Sundays 10:00 AM • Wednesdays 7:00 PM</Text>
+              <Text style={styles.infoValue}>Wednesdays 7:00 PM - 9:00 PM</Text>
             </View>
             <Ionicons name="chevron-down" size={20} color="#8e8e93" />
           </View>
@@ -183,20 +177,11 @@ export default function GroupProfileScreen() {
           <Text style={styles.sectionTitle}>Meeting Times</Text>
           <View style={styles.meetingItem}>
             <View style={styles.meetingDay}>
-              <Text style={styles.dayText}>SUN</Text>
-            </View>
-            <View style={styles.meetingInfo}>
-              <Text style={styles.meetingTitle}>Sunday Service</Text>
-              <Text style={styles.meetingTime}>10:00 AM - 12:00 PM</Text>
-            </View>
-          </View>
-          <View style={styles.meetingItem}>
-            <View style={styles.meetingDay}>
               <Text style={styles.dayText}>WED</Text>
             </View>
             <View style={styles.meetingInfo}>
               <Text style={styles.meetingTitle}>Bible Study</Text>
-              <Text style={styles.meetingTime}>7:00 PM - 8:30 PM</Text>
+              <Text style={styles.meetingTime}>7:00 PM - 9:00 PM</Text>
             </View>
           </View>
         </View>
@@ -274,6 +259,13 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     backgroundColor: '#000000',
     padding: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  avatarPlaceholder: {
+    fontSize: 48,
+    fontWeight: '700',
+    color: '#ffffff',
   },
   groupTitle: {
     fontSize: 28,

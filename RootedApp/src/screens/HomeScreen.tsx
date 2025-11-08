@@ -11,7 +11,6 @@ import {
   TextInput,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 
@@ -42,48 +41,96 @@ export default function HomeScreen() {
           /* Browse Categories Grid */
           <View style={styles.browseGrid}>
             <TouchableOpacity 
-              style={[styles.browseCard, styles.musicCard]}
+              style={styles.browseCard}
               onPress={() => navigation.navigate('Music' as never)}
             >
-              <Text style={styles.browseCardText}>Music</Text>
-              <Ionicons name="musical-notes" size={24} color="rgba(255,255,255,0.3)" style={styles.browseCardIcon} />
+              <ImageBackground
+                source={require('../../assets/Worship.jpg')}
+                style={styles.browseCardBackground}
+                imageStyle={{ borderRadius: 12 }}
+              >
+                <View style={styles.browseCardOverlay}>
+                  <Text style={styles.browseCardText}>Music</Text>
+                  <Ionicons name="musical-notes" size={24} color="rgba(255,255,255,0.9)" style={styles.browseCardIcon} />
+                </View>
+              </ImageBackground>
             </TouchableOpacity>
             
             <TouchableOpacity 
-              style={[styles.browseCard, styles.podcastsCard]}
+              style={styles.browseCard}
               onPress={() => navigation.navigate('Podcast' as never)}
             >
-              <Text style={styles.browseCardText}>Podcasts</Text>
-              <Ionicons name="headset" size={24} color="rgba(255,255,255,0.3)" style={styles.browseCardIcon} />
+              <ImageBackground
+                source={require('../../assets/Podcast.jpg')}
+                style={styles.browseCardBackground}
+                imageStyle={{ borderRadius: 12 }}
+              >
+                <View style={styles.browseCardOverlay}>
+                  <Text style={styles.browseCardText}>Podcasts</Text>
+                  <Ionicons name="headset" size={24} color="rgba(255,255,255,0.9)" style={styles.browseCardIcon} />
+                </View>
+              </ImageBackground>
             </TouchableOpacity>
             
             <TouchableOpacity 
-              style={[styles.browseCard, styles.booksCard]}
+              style={styles.browseCard}
               onPress={() => navigation.navigate('Audiobook' as never)}
             >
-              <Text style={styles.browseCardText}>Books</Text>
-              <Ionicons name="book" size={24} color="rgba(255,255,255,0.3)" style={styles.browseCardIcon} />
+              <ImageBackground
+                source={require('../../assets/Books.jpg')}
+                style={styles.browseCardBackground}
+                imageStyle={{ borderRadius: 12 }}
+              >
+                <View style={styles.browseCardOverlay}>
+                  <Text style={styles.browseCardText}>Books</Text>
+                  <Ionicons name="book" size={24} color="rgba(255,255,255,0.9)" style={styles.browseCardIcon} />
+                </View>
+              </ImageBackground>
             </TouchableOpacity>
             
-            <TouchableOpacity style={[styles.browseCard, styles.devotionalsCard]}>
-              <Text style={styles.browseCardText}>Devotionals</Text>
-              <Ionicons name="heart" size={24} color="rgba(255,255,255,0.3)" style={styles.browseCardIcon} />
+            <TouchableOpacity style={styles.browseCard}>
+              <ImageBackground
+                source={require('../../assets/Devotional.jpg')}
+                style={styles.browseCardBackground}
+                imageStyle={{ borderRadius: 12 }}
+              >
+                <View style={styles.browseCardOverlay}>
+                  <Text style={styles.browseCardText}>Devotionals</Text>
+                  <Ionicons name="heart" size={24} color="rgba(255,255,255,0.9)" style={styles.browseCardIcon} />
+                </View>
+              </ImageBackground>
             </TouchableOpacity>
             
             <TouchableOpacity 
-              style={[styles.browseCard, styles.apparelCard]}
+              style={styles.browseCard}
               onPress={() => navigation.navigate('Apparel' as never)}
             >
-              <Text style={styles.browseCardText}>Apparel</Text>
-              <Ionicons name="shirt" size={24} color="rgba(255,255,255,0.3)" style={styles.browseCardIcon} />
+              <ImageBackground
+                source={require('../../assets/Fashion.jpg')}
+                style={styles.browseCardBackground}
+                imageStyle={{ borderRadius: 12 }}
+              >
+                <View style={styles.browseCardOverlay}>
+                  <Text style={styles.browseCardText}>Apparel</Text>
+                  <Ionicons name="shirt" size={24} color="rgba(255,255,255,0.9)" style={styles.browseCardIcon} />
+                </View>
+              </ImageBackground>
             </TouchableOpacity>
             
             <TouchableOpacity 
-              style={[styles.browseCard, styles.creatorsCard]}
+              style={styles.browseCard}
               onPress={() => navigation.navigate('Creators' as never)}
             >
-              <Text style={styles.browseCardText}>Creators</Text>
-              <Ionicons name="people" size={24} color="rgba(255,255,255,0.3)" style={styles.browseCardIcon} />
+              <ImageBackground
+                source={require('../../assets/GodFirst.jpg')}
+                style={styles.browseCardBackground}
+                imageStyle={{ borderRadius: 12 }}
+              >
+                <View style={styles.browseCardOverlay}>
+                  <Text style={styles.browseCardText}>Creators</Text>
+                  <Ionicons name="people" size={24} color="rgba(255,255,255,0.9)" style={styles.browseCardIcon} />
+                </View>
+              </ImageBackground>
             </TouchableOpacity>
           </View>
         ) : (
@@ -305,11 +352,10 @@ const styles = StyleSheet.create({
   },
   browseCard: {
     width: '48%',
-    height: 100,
+    height: 160,
     borderRadius: 12,
-    padding: 16,
     marginBottom: 12,
-    justifyContent: 'space-between',
+    overflow: 'hidden',
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -319,29 +365,21 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
   },
-  musicCard: {
-    backgroundColor: '#4A4238',
+  browseCardBackground: {
+    width: '100%',
+    height: '100%',
   },
-  podcastsCard: {
-    backgroundColor: '#8B6F47',
-  },
-  booksCard: {
-    backgroundColor: '#C19A6B',
-  },
-  devotionalsCard: {
-    backgroundColor: '#A0826D',
-  },
-  apparelCard: {
-    backgroundColor: '#9B7653',
-  },
-  creatorsCard: {
-    backgroundColor: '#7D5E3F',
+  browseCardOverlay: {
+    flex: 1,
+    padding: 16,
+    justifyContent: 'space-between',
+    backgroundColor: 'rgba(0, 0, 0, 0.35)',
+    borderRadius: 12,
   },
   browseCardText: {
     color: '#ffffff',
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: '700',
-    marginBottom: 8,
   },
   browseCardIcon: {
     alignSelf: 'flex-end',
