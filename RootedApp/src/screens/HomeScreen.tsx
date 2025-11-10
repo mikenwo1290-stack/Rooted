@@ -42,7 +42,7 @@ export default function HomeScreen() {
           <View style={styles.browseGrid}>
             <TouchableOpacity 
               style={styles.browseCard}
-              onPress={() => navigation.navigate('Music' as never)}
+              onPress={() => navigation.navigate('MusicReels' as never)}
             >
               <ImageBackground
                 source={require('../../assets/Worship.jpg')}
