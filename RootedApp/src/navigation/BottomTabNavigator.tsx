@@ -8,6 +8,7 @@ import HomeScreen from '../screens/HomeScreen';
 import DiscoverScreen from '../screens/DiscoverScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import MusicScreen from '../screens/MusicScreen';
+import MusicReelsScreen from '../screens/MusicReelsScreen';
 import PodcastScreen from '../screens/PodcastScreen';
 import AudiobookScreen from '../screens/AudiobookScreen';
 import VideoFeedScreen from '../screens/VideoFeedScreen';
@@ -31,6 +32,7 @@ function HomeStackNavigator() {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="HomeMain" component={HomeScreen} />
       <Stack.Screen name="Music" component={MusicScreen} />
+      <Stack.Screen name="MusicReels" component={MusicReelsScreen} />
       <Stack.Screen name="Podcast" component={PodcastScreen} />
       <Stack.Screen name="Audiobook" component={AudiobookScreen} />
       <Stack.Screen name="EventVideoFeed" component={EventVideoFeedScreen} />
@@ -100,9 +102,25 @@ export default function BottomTabNavigator() {
         <Tab.Screen 
           name="Home" 
           component={HomeStackNavigator}
-          options={{
+          options={({ route }) => ({
             tabBarLabel: 'Home',
-          }}
+            tabBarStyle: ((route) => {
+              const routeName = getFocusedRouteNameFromRoute(route) ?? '';
+              if (routeName === 'MusicReels' || routeName === 'EventVideoFeed') {
+                return { display: 'none' };
+              }
+              return {
+                backgroundColor: '#ffffff',
+                borderTopWidth: 0.5,
+                borderTopColor: '#e5e5e7',
+                height: 84,
+                paddingTop: 8,
+                paddingBottom: 28,
+                elevation: 0,
+                shadowOpacity: 0,
+              };
+            })(route),
+          })}
         />
         <Tab.Screen 
           name="Discover" 
