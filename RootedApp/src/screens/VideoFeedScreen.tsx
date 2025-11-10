@@ -378,13 +378,13 @@ const styles = StyleSheet.create({
   authorInfoButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    backgroundColor: 'rgba(0, 0, 0, 0.55)',
     paddingVertical: 10,
-    paddingHorizontal: 12,
-    borderRadius: 28,
+    paddingHorizontal: 14,
+    borderRadius: 32,
     alignSelf: 'flex-start',
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.2)',
+    borderColor: 'rgba(255, 255, 255, 0.15)',
     maxWidth: '100%',
   },
   authorAvatar: {
@@ -442,7 +442,7 @@ const styles = StyleSheet.create({
   },
   actionsContainer: {
     alignItems: 'center',
-    gap: 20,
+    gap: 26,
   },
   actionButton: {
     alignItems: 'center',
