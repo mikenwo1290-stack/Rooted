@@ -348,29 +348,6 @@ export default function MusicReelsScreen() {
               <Text style={styles.songTitle} numberOfLines={1}>
                 {item.songTitle}
               </Text>
-
-              {/* Album Art with Add Button */}
-              <View style={styles.albumSection}>
-                {item.albumArt ? (
-                  <Image 
-                    source={{ uri: item.albumArt }} 
-                    style={styles.albumArt}
-                  />
-                ) : (
-                  <View style={styles.albumArtPlaceholder}>
-                    <Ionicons name="musical-notes" size={24} color="#ffffff" />
-                  </View>
-                )}
-                <View style={styles.albumInfo}>
-                  <Text style={styles.albumTitle} numberOfLines={1}>
-                    {item.albumTitle}
-                  </Text>
-                  <TouchableOpacity style={styles.addButton}>
-                    <Ionicons name="add" size={16} color="#ffffff" />
-                    <Text style={styles.addButtonText}>Add</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
             </View>
 
             {/* Right Side - Action Buttons */}
@@ -414,31 +391,6 @@ export default function MusicReelsScreen() {
               </TouchableOpacity>
             </View>
           </View>
-
-          {/* Play/Pause Controls */}
-          {item.videoUrl && (
-            <View style={styles.playbackControls}>
-              <TouchableOpacity 
-                style={styles.playPauseButton}
-                onPress={() => togglePlayPause(item.id)}
-              >
-                <Ionicons 
-                  name={isVideoPlaying ? "pause" : "play"} 
-                  size={24} 
-                  color="#ffffff" 
-                />
-              </TouchableOpacity>
-              
-              {/* Progress Bar */}
-              <View style={styles.progressBarContainer}>
-                <View style={styles.progressBarBackground}>
-                  <View 
-                    style={[styles.progressBarFill, { width: `${progress * 100}%` }]} 
-                  />
-                </View>
-              </View>
-            </View>
-          )}
         </View>
 
         {/* Play Button Overlay - only show when paused and has video */}
