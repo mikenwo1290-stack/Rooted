@@ -12,73 +12,63 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import { Video, ResizeMode, AVPlaybackStatus, Audio } from 'expo-av';
+import { Video, ResizeMode, Audio } from 'expo-av';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 
 const { height, width } = Dimensions.get('window');
 const HIT = { top: 10, bottom: 10, left: 10, right: 10 };
 
-interface MusicReel {
+interface PodcastReel {
   id: string;
   videoUrl?: string;
   imageUrl?: string;
-  artistName: string;
-  artistProfilePic?: string | any;
-  artistFollowers: string;
-  songTitle: string;
-  albumTitle: string;
-  albumArt?: string;
+  podcastName: string;
+  hostProfilePic?: string | any;
+  hostName: string;
+  episodeTitle: string;
   textOverlay: string;
   isFollowing?: boolean;
 }
 
-// Music Reels Data
-// TO UPDATE VIDEO URL: Go to Firebase Console → Storage → Find YourWaysBetter.mp4 → Copy Download URL
-// Then replace the videoUrl below with the complete URL including the token
-const defaultMusicReels: MusicReel[] = [
+// Podcast Reels Data
+const defaultPodcastReels: PodcastReel[] = [
   {
     id: '1',
-    videoUrl: 'https://firebasestorage.googleapis.com/v0/b/rooted-90e83.firebasestorage.app/o/YourWaysBetter.mp4?alt=media&token=YOUR_TOKEN_HERE',
+    videoUrl: 'https://firebasestorage.googleapis.com/v0/b/rooted-90e83.firebasestorage.app/o/GirlsGoneBible.mp4?alt=media&token=e784af21-b11f-4913-90ad-1082fd1dc6c3',
     imageUrl: undefined,
-    artistName: 'Forrest Frank',
-    artistProfilePic: require('../../assets/forrest frank.jpeg'),
-    artistFollowers: '125K',
-    songTitle: 'Your Ways Better',
-    albumTitle: 'Gospel Collection',
-    albumArt: undefined,
-    textOverlay: 'YOUR WAYS BETTER',
+    podcastName: 'Girls Gone Bible',
+    hostProfilePic: require('../../assets/girlsgonebiblepp.jpeg'),
+    hostName: 'Girls Gone Bible',
+    episodeTitle: 'Faith & Real Talk',
+    textOverlay: 'FAITH & REAL TALK',
     isFollowing: false,
   },
   {
     id: '2',
-    videoUrl: 'https://firebasestorage.googleapis.com/v0/b/rooted-90e83.firebasestorage.app/o/GoodbyeYesterday.mp4?alt=media&token=476c6a17-481c-47fd-9b17-ef19ce34adf3',
-    imageUrl: undefined,
-    artistName: 'Elevation Rhythm',
-    artistProfilePic: require('../../assets/ElevationRythmn.jpeg'),
-    artistFollowers: '850K',
-    songTitle: 'Goodbye Yesterday',
-    albumTitle: 'Worship Songs',
-    albumArt: undefined,
-    textOverlay: 'GOODBYE YESTERDAY',
-    isFollowing: false,
+    videoUrl: undefined,
+    imageUrl: 'https://images.unsplash.com/photo-1590602847861-f357a9332bbc?w=800',
+    podcastName: 'This American Life',
+    hostProfilePic: undefined,
+    hostName: 'Ira Glass',
+    episodeTitle: 'Stories of Grace',
+    textOverlay: 'STORIES OF GRACE',
+    isFollowing: true,
   },
   {
     id: '3',
-    videoUrl: 'https://firebasestorage.googleapis.com/v0/b/rooted-90e83.firebasestorage.app/o/LoveLikeThat.mp4?alt=media&token=f18d410e-69ad-4fb2-83d9-6e9b43115ae3',
-    imageUrl: undefined,
-    artistName: 'Hulvey',
-    artistProfilePic: require('../../assets/Hulvey.jpeg'),
-    artistFollowers: '450K',
-    songTitle: 'Love Like That',
-    albumTitle: 'Christopher',
-    albumArt: undefined,
-    textOverlay: 'LOVE LIKE THAT',
-    isFollowing: true,
+    videoUrl: undefined,
+    imageUrl: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=800',
+    podcastName: 'Gospel Conversations',
+    hostProfilePic: undefined,
+    hostName: 'Sarah Johnson',
+    episodeTitle: 'Living with Purpose',
+    textOverlay: 'LIVING WITH PURPOSE',
+    isFollowing: false,
   },
 ];
 
-export default function MusicReelsScreen() {
+export default function PodcastReelsScreen() {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
   
@@ -87,7 +77,7 @@ export default function MusicReelsScreen() {
   const [isMuted, setIsMuted] = useState(false);
   const [likedReels, setLikedReels] = useState<Set<string>>(new Set());
   const [savedReels, setSavedReels] = useState<Set<string>>(new Set());
-  const [followingArtists, setFollowingArtists] = useState<Set<string>>(new Set());
+  const [followingHosts, setFollowingHosts] = useState<Set<string>>(new Set());
   const [playbackProgress, setPlaybackProgress] = useState<{ [key: string]: number }>({});
   
   const flatListRef = useRef<FlatList>(null);
@@ -114,17 +104,17 @@ export default function MusicReelsScreen() {
   // Initialize following state from reel data
   useEffect(() => {
     const following = new Set<string>();
-    defaultMusicReels.forEach(reel => {
+    defaultPodcastReels.forEach(reel => {
       if (reel.isFollowing) {
-        following.add(reel.artistName);
+        following.add(reel.hostName);
       }
     });
-    setFollowingArtists(following);
+    setFollowingHosts(following);
   }, []);
 
   // Autoplay the first reel if it has a video
   useEffect(() => {
-    const first = defaultMusicReels[0];
+    const first = defaultPodcastReels[0];
     if (first?.videoUrl) {
       const t = setTimeout(() => {
         const ref = videoRefs.current[first.id];
@@ -144,7 +134,7 @@ export default function MusicReelsScreen() {
       setCurrentIndex(newIndex);
       
       // Pause all videos except the current one
-      defaultMusicReels.forEach((reel, index) => {
+      defaultPodcastReels.forEach((reel, index) => {
         if (index !== newIndex && videoRefs.current[reel.id]) {
           videoRefs.current[reel.id]?.pauseAsync();
           setIsPlaying(prev => ({ ...prev, [reel.id]: false }));
@@ -157,7 +147,7 @@ export default function MusicReelsScreen() {
       });
       
       // Auto-play the new current video if it has a video URL
-      const currentReel = defaultMusicReels[newIndex];
+      const currentReel = defaultPodcastReels[newIndex];
       if (currentReel && currentReel.videoUrl && videoRefs.current[currentReel.id]) {
         videoRefs.current[currentReel.id]?.playAsync();
         setIsPlaying(prev => ({ ...prev, [currentReel.id]: true }));
@@ -199,7 +189,7 @@ export default function MusicReelsScreen() {
   };
 
   const togglePlayPause = async (reelId: string) => {
-    const reel = defaultMusicReels.find(r => r.id === reelId);
+    const reel = defaultPodcastReels.find(r => r.id === reelId);
     if (!reel || !reel.videoUrl) return;
     
     const video = videoRefs.current[reelId];
@@ -255,25 +245,24 @@ export default function MusicReelsScreen() {
     });
   };
 
-  const toggleFollow = (artistName: string) => {
-    setFollowingArtists((prev) => {
+  const toggleFollow = (hostName: string) => {
+    setFollowingHosts((prev) => {
       const newSet = new Set(prev);
-      if (newSet.has(artistName)) {
-        newSet.delete(artistName);
+      if (newSet.has(hostName)) {
+        newSet.delete(hostName);
       } else {
-        newSet.add(artistName);
+        newSet.add(hostName);
       }
       return newSet;
     });
   };
 
-  const renderMusicReel = ({ item, index }: { item: MusicReel; index: number }) => {
+  const renderPodcastReel = ({ item, index }: { item: PodcastReel; index: number }) => {
     const isLiked = likedReels.has(item.id);
     const isSaved = savedReels.has(item.id);
-    const isFollowing = followingArtists.has(item.artistName);
+    const isFollowing = followingHosts.has(item.hostName);
     const isVideoPlaying = isPlaying[item.id] || false;
     const progress = playbackProgress[item.id] || 0;
-    const overlayFontSize = Math.min(44, Math.max(28, width * 0.095));
 
     return (
       <View style={styles.reelContainer}>
@@ -337,9 +326,9 @@ export default function MusicReelsScreen() {
             <Ionicons name="arrow-back" size={28} color="#ffffff" />
           </TouchableOpacity>
           
-          {/* Centered Artist Name */}
-          <Text style={styles.artistNameHeader} numberOfLines={1}>
-            {item.artistName}
+          {/* Centered Podcast Name */}
+          <Text style={styles.podcastNameHeader} numberOfLines={1}>
+            {item.podcastName}
           </Text>
           
           {/* Volume/Speaker Icon */}
@@ -358,25 +347,22 @@ export default function MusicReelsScreen() {
         {/* Bottom Overlay */}
         <View style={[styles.bottomOverlay, { paddingBottom: insets.bottom + 24 }]}>
           <View style={styles.bottomContent}>
-            {/* Left Side - Song Info Pill */}
+            {/* Left Side - Episode Info Pill */}
             <View style={styles.leftContent}>
-              <View style={styles.songInfoPill}>
-                {item.artistProfilePic ? (
+              <View style={styles.episodeInfoPill}>
+                {item.hostProfilePic ? (
                   <Image 
-                    source={typeof item.artistProfilePic === 'string' ? { uri: item.artistProfilePic } : item.artistProfilePic} 
-                    style={styles.artistProfilePic}
+                    source={typeof item.hostProfilePic === 'string' ? { uri: item.hostProfilePic } : item.hostProfilePic} 
+                    style={styles.hostProfilePic}
                   />
                 ) : (
-                  <View style={styles.artistProfilePicPlaceholder}>
-                    <Ionicons name="person" size={20} color="#ffffff" />
+                  <View style={styles.hostProfilePicPlaceholder}>
+                    <Ionicons name="mic" size={20} color="#ffffff" />
                   </View>
                 )}
-                <View style={styles.songInfoText}>
-                  <Text style={styles.songTitle} numberOfLines={1}>
-                    {item.songTitle}
-                  </Text>
-                  <Text style={styles.artistNameText} numberOfLines={1}>
-                    {item.artistName}
+                <View style={styles.episodeInfoText}>
+                  <Text style={styles.hostNameText} numberOfLines={1}>
+                    {item.hostName}
                   </Text>
                 </View>
               </View>
@@ -448,8 +434,6 @@ export default function MusicReelsScreen() {
             </View>
           )}
         </View>
-
-        {/* Play Button Overlay - removed for invisible tap-to-pause feature */}
       </View>
     );
   };
@@ -458,8 +442,8 @@ export default function MusicReelsScreen() {
     <SafeAreaView style={styles.container} edges={[]}>
       <FlatList
         ref={flatListRef}
-        data={defaultMusicReels}
-        renderItem={renderMusicReel}
+        data={defaultPodcastReels}
+        renderItem={renderPodcastReel}
         keyExtractor={(item) => item.id}
         pagingEnabled
         showsVerticalScrollIndicator={false}
@@ -500,10 +484,6 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
-  darkOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0, 0, 0, 0.1)',
-  },
   gradientTop: {
     position: 'absolute',
     top: 0,
@@ -540,7 +520,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  artistNameHeader: {
+  podcastNameHeader: {
     flex: 1,
     fontSize: 18,
     fontWeight: '700',
@@ -558,26 +538,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.4)',
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  textOverlayContainer: {
-    position: 'absolute',
-    top: '26%',
-    left: 0,
-    right: 0,
-    paddingHorizontal: 32,
-    zIndex: 5,
-  },
-  textOverlay: {
-    fontWeight: '900',
-    color: '#ffffff',
-    textAlign: 'center',
-    textShadowColor: 'rgba(0, 0, 0, 0.9)',
-    textShadowOffset: { width: 0, height: 3 },
-    textShadowRadius: 8,
-    letterSpacing: 1.5,
-    includeFontPadding: false,
-    alignSelf: 'center',
-    maxWidth: '92%',
   },
   bottomOverlay: {
     position: 'absolute',
@@ -598,7 +558,7 @@ const styles = StyleSheet.create({
     marginRight: 12,
     maxWidth: '68%',
   },
-  songInfoPill: {
+  episodeInfoPill: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.6)',
@@ -608,7 +568,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.2)',
   },
-  artistProfilePic: {
+  hostProfilePic: {
     width: 44,
     height: 44,
     borderRadius: 22,
@@ -616,7 +576,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: '#ffffff',
   },
-  artistProfilePicPlaceholder: {
+  hostProfilePicPlaceholder: {
     width: 44,
     height: 44,
     borderRadius: 22,
@@ -627,11 +587,11 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: '#ffffff',
   },
-  songInfoText: {
+  episodeInfoText: {
     flex: 1,
     justifyContent: 'center',
   },
-  songTitle: {
+  episodeTitle: {
     fontSize: 16,
     fontWeight: '700',
     color: '#ffffff',
@@ -640,11 +600,10 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 3,
   },
-  artistNameText: {
-    fontSize: 13,
-    fontWeight: '500',
+  hostNameText: {
+    fontSize: 16,
+    fontWeight: '700',
     color: '#ffffff',
-    opacity: 0.9,
     textShadowColor: 'rgba(0, 0, 0, 0.9)',
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 3,
@@ -699,24 +658,5 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
     borderRadius: 2,
   },
-  playButtonOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 5,
-  },
-  playButton: {
-    width: 90,
-    height: 90,
-    borderRadius: 45,
-    backgroundColor: 'rgba(255, 255, 255, 0.25)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 3,
-    borderColor: '#ffffff',
-  },
 });
+

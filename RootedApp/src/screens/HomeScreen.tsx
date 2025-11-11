@@ -58,7 +58,7 @@ export default function HomeScreen() {
             
             <TouchableOpacity 
               style={styles.browseCard}
-              onPress={() => navigation.navigate('Podcast' as never)}
+              onPress={() => navigation.navigate('PodcastReels' as never)}
             >
               <ImageBackground
                 source={require('../../assets/Podcast.jpg')}

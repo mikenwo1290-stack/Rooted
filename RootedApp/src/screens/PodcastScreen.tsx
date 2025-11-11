@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -14,33 +14,144 @@ import { useNavigation } from '@react-navigation/native';
 
 const { width } = Dimensions.get('window');
 
+type Category = 'All' | 'Faith' | 'Devotional' | 'Teaching' | 'Testimony' | 'Contemporary';
+
 export default function PodcastScreen() {
   const navigation = useNavigation();
-  const topPodcasts = [
+  const [selectedCategory, setSelectedCategory] = useState<Category>('All');
+
+  const categories: Category[] = ['All', 'Faith', 'Devotional', 'Teaching', 'Testimony', 'Contemporary'];
+
+  const podcastsByCategory: Record<Category, Array<{ id: number; name: string; image: string }>> = {
+    All: [
+      {
+        id: 1,
+        name: 'The Daily',
+        image: 'https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=800',
+      },
+      {
+        id: 2,
+        name: 'This American Life',
+        image: 'https://images.unsplash.com/photo-1590602847861-f357a9332bbc?w=800',
+      },
+      {
+        id: 3,
+        name: 'Gospel Conversations',
+        image: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=800',
+      },
+      {
+        id: 4,
+        name: 'Faith Today',
+        image: 'https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=800',
+      },
+    ],
+    Faith: [
+      {
+        id: 11,
+        name: 'Faith Conversations',
+        image: 'https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=800',
+      },
+      {
+        id: 12,
+        name: 'Spiritual Growth',
+        image: 'https://images.unsplash.com/photo-1590602847861-f357a9332bbc?w=800',
+      },
+      {
+        id: 13,
+        name: 'Faith Builders',
+        image: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=800',
+      },
+    ],
+    Devotional: [
+      {
+        id: 21,
+        name: 'Daily Devotions',
+        image: 'https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=800',
+      },
+      {
+        id: 22,
+        name: 'Morning Prayer',
+        image: 'https://images.unsplash.com/photo-1590602847861-f357a9332bbc?w=800',
+      },
+      {
+        id: 23,
+        name: 'Word for Today',
+        image: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=800',
+      },
+    ],
+    Teaching: [
+      {
+        id: 31,
+        name: 'Bible Study',
+        image: 'https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=800',
+      },
+      {
+        id: 32,
+        name: 'Theology 101',
+        image: 'https://images.unsplash.com/photo-1590602847861-f357a9332bbc?w=800',
+      },
+      {
+        id: 33,
+        name: 'Christian Foundations',
+        image: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=800',
+      },
+    ],
+    Testimony: [
+      {
+        id: 41,
+        name: 'Changed Lives',
+        image: 'https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=800',
+      },
+      {
+        id: 42,
+        name: 'Stories of Grace',
+        image: 'https://images.unsplash.com/photo-1590602847861-f357a9332bbc?w=800',
+      },
+      {
+        id: 43,
+        name: 'Transformation Stories',
+        image: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=800',
+      },
+    ],
+    Contemporary: [
+      {
+        id: 51,
+        name: 'Modern Faith',
+        image: 'https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=800',
+      },
+      {
+        id: 52,
+        name: 'Faith in Culture',
+        image: 'https://images.unsplash.com/photo-1590602847861-f357a9332bbc?w=800',
+      },
+      {
+        id: 53,
+        name: 'Next Gen Faith',
+        image: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=800',
+      },
+    ],
+  };
+
+  const topPodcasts = podcastsByCategory[selectedCategory] || [
     {
       id: 1,
       name: 'The Daily',
-      image: '',
+      image: 'https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=800',
     },
     {
       id: 2,
       name: 'This American Life',
-      image: '',
+      image: 'https://images.unsplash.com/photo-1590602847861-f357a9332bbc?w=800',
     },
     {
       id: 3,
-      name: 'Serial',
-      image: '',
+      name: 'Gospel Conversations',
+      image: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=800',
     },
     {
       id: 4,
-      name: 'Radiolab',
-      image: '',
-    },
-    {
-      id: 5,
-      name: 'Fresh Air',
-      image: '',
+      name: 'Faith Today',
+      image: 'https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=800',
     },
   ];
 
@@ -75,10 +186,42 @@ export default function PodcastScreen() {
           </TouchableOpacity>
         </View>
 
+        {/* Category Filter Pills */}
+        <ScrollView 
+          horizontal 
+          showsHorizontalScrollIndicator={false} 
+          style={styles.categoryFilterContainer}
+          contentContainerStyle={styles.categoryFilterContent}
+        >
+          {categories.map((category) => (
+            <TouchableOpacity
+              key={category}
+              style={[
+                styles.categoryPill,
+                selectedCategory === category && styles.activeCategoryPill,
+              ]}
+              onPress={() => setSelectedCategory(category)}
+            >
+              <Text
+                style={[
+                  styles.categoryPillText,
+                  selectedCategory === category && styles.activeCategoryPillText,
+                ]}
+              >
+                {category}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+
         {/* Top Podcasts List */}
         <View style={styles.podcastsList}>
           {topPodcasts.map((podcast, index) => (
-            <TouchableOpacity key={podcast.id} style={styles.podcastItem}>
+            <TouchableOpacity 
+              key={podcast.id} 
+              style={styles.podcastItem}
+              onPress={() => navigation.navigate('PodcastReels' as never)}
+            >
               <View style={styles.podcastNumber}>
                 <Text style={styles.numberText}>{index + 1}</Text>
               </View>
@@ -171,6 +314,34 @@ const styles = StyleSheet.create({
     borderRadius: 2,
     backgroundColor: '#ffffff',
     marginVertical: 1,
+  },
+  categoryFilterContainer: {
+    backgroundColor: '#FF2B2B',
+    paddingVertical: 12,
+  },
+  categoryFilterContent: {
+    paddingHorizontal: 16,
+  },
+  categoryPill: {
+    paddingHorizontal: 20,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: 'rgba(0, 0, 0, 0.2)',
+    marginRight: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
+  },
+  activeCategoryPill: {
+    backgroundColor: '#000000',
+    borderColor: '#000000',
+  },
+  categoryPillText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: 'rgba(255, 255, 255, 0.8)',
+  },
+  activeCategoryPillText: {
+    color: '#ffffff',
   },
   podcastsList: {
     paddingHorizontal: 16,

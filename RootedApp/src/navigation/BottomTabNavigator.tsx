@@ -10,6 +10,7 @@ import ProfileScreen from '../screens/ProfileScreen';
 import MusicScreen from '../screens/MusicScreen';
 import MusicReelsScreen from '../screens/MusicReelsScreen';
 import PodcastScreen from '../screens/PodcastScreen';
+import PodcastReelsScreen from '../screens/PodcastReelsScreen';
 import AudiobookScreen from '../screens/AudiobookScreen';
 import VideoFeedScreen from '../screens/VideoFeedScreen';
 import EventVideoFeedScreen from '../screens/EventVideoFeedScreen';
@@ -34,6 +35,7 @@ function HomeStackNavigator() {
       <Stack.Screen name="Music" component={MusicScreen} />
       <Stack.Screen name="MusicReels" component={MusicReelsScreen} />
       <Stack.Screen name="Podcast" component={PodcastScreen} />
+      <Stack.Screen name="PodcastReels" component={PodcastReelsScreen} />
       <Stack.Screen name="Audiobook" component={AudiobookScreen} />
       <Stack.Screen name="EventVideoFeed" component={EventVideoFeedScreen} />
       <Stack.Screen name="ArtistProfile" component={ArtistProfileScreen} />
@@ -106,7 +108,7 @@ export default function BottomTabNavigator() {
             tabBarLabel: 'Home',
             tabBarStyle: ((route) => {
               const routeName = getFocusedRouteNameFromRoute(route) ?? '';
-              if (['MusicReels', 'ArtistReels', 'EventVideoFeed'].includes(routeName)) {
+              if (['MusicReels', 'PodcastReels', 'ArtistReels', 'EventVideoFeed'].includes(routeName)) {
                 return { display: 'none' };
               }
               return {
